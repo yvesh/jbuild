@@ -1,7 +1,7 @@
 {
   "name": "yvesh/jbuild",
-  "description": "Robo.li tools and build-/ generator-scripts for Joomla! extensions",
-  "license": "GPL-2.0",
+  "description": "Robo.li tasks for Joomla! extensions (build, map and generate)",
+  "license": "GPL-2.0+",
   "authors": [
     {
       "name": "Yves Hoppe",

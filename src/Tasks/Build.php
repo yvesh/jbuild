@@ -86,7 +86,7 @@ class Build extends JTask implements TaskInterface
 	 */
 	private function prepareDistDirectory()
 	{
-		$build = $this->getconfig()->buildfolder;
+		$build = $this->_dest();
 
 		if (!file_exists($build))
 		{
