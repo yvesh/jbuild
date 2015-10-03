@@ -1,0 +1,23 @@
+{
+  "name": "yvesh/jbuild",
+  "description": "Robo.li tools and build-/ generator-scripts for Joomla! extensions",
+  "license": "GPL-2.0",
+  "authors": [
+    {
+      "name": "Yves Hoppe",
+      "email": "yves@compojoom.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"JBuild\\": "src"}
+  },
+  "require"    : {
+    "php": ">=5.4.0"
+  },
+  "require-dev": {
+    "codeception/codeception": "2.0.13",
+    "joomla-projects/joomla-browser": "dev-develop",
+    "codegyre/robo": "0.5.*",
+    "joomla-projects/robo": "dev-master"
+  }
+}
