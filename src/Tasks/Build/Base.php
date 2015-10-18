@@ -291,7 +291,8 @@ class Base extends JTask implements TaskInterface
 	/**
 	 * Generate a list of files for plugins
 	 *
-	 * @param   array  $files  Files and Folders array
+	 * @param   array   $files   Files and Folders array
+	 * @param   string  $plugin  The plugin file
 	 *
 	 * @return  string
 	 */
@@ -322,6 +323,43 @@ class Base extends JTask implements TaskInterface
 
 		return implode("\n", $text);
 	}
+
+	/**
+	 * Generate a list of files for modules
+	 *
+	 * @param   array   $files   Files and Folders array
+	 * @param   string  $module  The module
+	 *
+	 * @return  string
+	 */
+	public function generateModuleFileList($files, $module)
+	{
+		if (!count($files))
+		{
+			return "";
+		}
+
+		$text = array();
+
+		foreach ($files as $f)
+		{
+			foreach ($f as $type => $value)
+			{
+				$p = "";
+
+				if ($value == $module . ".php")
+				{
+					$p = ' module="' . $module . '"';
+
+				}
+
+				$text[] = "<" . $type . $p . ">" . $value . "</" . $type . ">";
+			}
+		}
+
+		return implode("\n", $text);
+	}
+
 
 	/**
 	 * Reset the files list, before build another part

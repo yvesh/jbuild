@@ -70,7 +70,7 @@ class Module extends Base implements TaskInterface
 		$files = $this->copyTarget($this->source, $this->target);
 
 		// Build media (relative path)
-		$media = $this->buildMedia("media/" . $this->modName);
+		$media = $this->buildMedia("media/" . $this->modName, $this->modName);
 		$media->run();
 
 		$this->addFiles('media', $media->getResultFiles());
@@ -115,9 +115,8 @@ class Module extends Base implements TaskInterface
 			->to(array($this->getDate(), date('Y'), $this->getConfig()->version))
 			->run();
 
-
 		// Files and folders
-		$f = $this->generateFileList($files);
+		$f = $this->generateModuleFileList($files, $this->modName);
 
 		$this->taskReplaceInFile($xmlFile)
 			->from('##MODULE_FILES##')

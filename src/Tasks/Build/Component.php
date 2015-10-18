@@ -88,7 +88,7 @@ class Component extends Base implements TaskInterface
 		}
 
 		// Build media (relative path)
-		$media = $this->buildMedia("media/com_" . $this->_ext());
+		$media = $this->buildMedia("media/com_" . $this->_ext(), 'com_' . $this->_ext());
 		$media->run();
 
 		$this->addFiles('media', $media->getResultFiles());

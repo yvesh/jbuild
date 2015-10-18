@@ -42,13 +42,14 @@ trait buildTasks
 	/**
 	 * Build media folder
 	 *
-	 * @param   array  $source  - The media folder (an extension could have multiple)
+	 * @param   array   $source  The media folder (an extension could have multiple)
+	 * @param   string  $type    The extension name (e.g. mod_xy)
 	 *
 	 * @return  Media
 	 */
-	protected function buildMedia($source)
+	protected function buildMedia($source, $extName)
 	{
-		return new Media($source);
+		return new Media($source, $extName);
 	}
 
 	/**

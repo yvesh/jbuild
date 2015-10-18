@@ -67,6 +67,8 @@ class Library extends Base implements TaskInterface
 
 		$this->setResultFiles($map);
 
+		// Copy XML
+
 		return true;
 	}
 

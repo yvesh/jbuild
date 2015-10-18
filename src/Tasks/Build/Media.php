@@ -34,17 +34,39 @@ class Media extends Base implements TaskInterface
 
 	protected $fileMap = null;
 
+	protected $type = "com";
+
+	protected $extName = null;
+
 	/**
 	 * Initialize Build Task
 	 *
-	 * @param   String  $folder  The target directory
+	 * @param   String  $folder   The target directory
+	 * @param   String  $extName  The extension name
 	 */
-	public function __construct($folder)
+	public function __construct($folder, $extName)
 	{
 		parent::__construct();
 
 		$this->source = $this->getSourceFolder() . "/" . $folder;
-		$this->target = $this->_dest() . "/" . $folder;
+		$this->extName = $extName;
+
+		$this->type = substr($extName, 0, 3);
+
+		$target = $this->_dest() . "/" . $folder;
+
+		if ($this->type == 'mod')
+		{
+			$target = $this->_dest() . "/modules/" . $extName . "/" . $folder;
+		}
+		elseif ($this->type == 'plg')
+		{
+			$a = explode("_", $this->extName);
+
+			$target = $this->_dest() . "/plugins/" . $a[1] . "/" . $a[2] . "/" . $folder;
+		}
+
+		$this->target = $target;
 	}
 
 	/**

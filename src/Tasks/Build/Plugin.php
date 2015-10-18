@@ -74,7 +74,7 @@ class Plugin extends Base implements TaskInterface
 		$files = $this->copyTarget($this->source, $this->target);
 
 		// Build media (relative path)
-		$media = $this->buildMedia("media/plg_" . $this->plgType . "_" . $this->plgName);
+		$media = $this->buildMedia("media/plg_" . $this->plgType . "_" . $this->plgName, 'plg_' . $this->plgType . "_" . $this->plgName);
 		$media->run();
 
 		$this->addFiles('media', $media->getResultFiles());
