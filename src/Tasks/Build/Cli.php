@@ -17,13 +17,13 @@ use Robo\Exception\TaskException;
 use JBuild\Tasks\JTask;
 
 /**
- * Class Media
+ * Build Cli
  *
  * @package  JBuild\Tasks\Build
  *
- * @since    1.0.1
+ * @since    1.0.2
  */
-class Media extends Base implements TaskInterface
+class Cli extends Base implements TaskInterface
 {
 	use \Robo\Task\Development\loadTasks;
 	use \Robo\Common\TaskIO;
@@ -36,25 +36,23 @@ class Media extends Base implements TaskInterface
 
 	/**
 	 * Initialize Build Task
-	 *
-	 * @param   String  $folder  The target directory
 	 */
-	public function __construct($folder)
+	public function __construct()
 	{
 		parent::__construct();
 
-		$this->source = $this->getSourceFolder() . "/" . $folder;
-		$this->target = $this->_dest() . "/" . $folder;
+		$this->source = $this->getSourceFolder() . "/cli";
+		$this->target = $this->_dest() . "/cli";
 	}
 
 	/**
-	 * Runs the media build task
+	 * Runs the cli build tasks, just copying files currently
 	 *
 	 * @return  bool
 	 */
 	public function run()
 	{
-		$this->say("Building media folder " . $this->source);
+		$this->say("Copying CLI files " . $this->source);
 
 		if (!file_exists($this->source))
 		{

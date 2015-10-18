@@ -82,6 +82,9 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 			$target = str_replace(".", "-", $target);
 
 			self::getConfig()->buildFolder = JPATH_BASE . $target;
+
+			// Date set
+			date_default_timezone_set('UTC');
 		}
 
 		// Detect operating system
@@ -193,5 +196,15 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	public function _dest()
 	{
 		return $this->getConfig()->buildFolder;
+	}
+
+	/**
+	 * Get the Source folder
+	 *
+	 * @return   string
+	 */
+	public function _source()
+	{
+		return $this->getSourceFolder();
 	}
 }

@@ -20,7 +20,7 @@ use JBuild\Tasks\JTask;
 /**
  * Class Component
  *
- * @package  JBuild\Tasks\Component
+ * @package  JBuild\Tasks\Build
  *
  * @since    1.0.1
  */
@@ -38,6 +38,10 @@ class Component extends Base implements TaskInterface
 
 	protected $hasFront = true;
 
+	protected $hasCli = true;
+
+	protected $hasLib = true;
+
 	/**
 	 * Initialize Build Task
 	 *
@@ -47,8 +51,11 @@ class Component extends Base implements TaskInterface
 	{
 		parent::__construct();
 
-		$this->adminPath = $this->getCodeBase() . "/administrator/components/com_" . $this->_ext();
-		$this->frontPath = $this->getCodeBase() . "/components/com_" . $this->_ext();
+		// Reset files - > new component
+		$this->resetFiles();
+
+		$this->adminPath = $this->getSourceFolder() . "/administrator/components/com_" . $this->_ext();
+		$this->frontPath = $this->getSourceFolder() . "/components/com_" . $this->_ext();
 	}
 
 	/**
@@ -86,8 +93,44 @@ class Component extends Base implements TaskInterface
 
 		$this->addFiles('media', $media->getResultFiles());
 
-		$language = $this->buildLanguage("com_matukio");
+		// Build language files for the component
+		$language = $this->buildLanguage("com_" . $this->_ext());
 		$language->run();
+
+		// Library
+		if ($this->hasLib)
+		{
+			$this->buildLibrary()->run();
+		}
+
+		// Cli
+		if ($this->hasCli)
+		{
+			$this->buildCli()->run();
+		}
+
+
+		// Update XML and script.php
+		$this->createInstaller();
+
+		// Copy XML and script.php to root
+		$adminFolder = $this->_dest() . "/administrator/components/com_" . $this->_ext();
+		$xmlFile     = $adminFolder . "/" . $this->_ext() . ".xml";
+		$scriptFile  = $adminFolder . "/script.php";
+
+		$this->_copy($xmlFile, $this->_dest() . "/" . $this->_ext() . ".xml");
+		$this->_copy($scriptFile, $this->_dest() . "/script.php");
+
+		if (file_exists($scriptFile))
+		{
+			$this->_copy($scriptFile, $this->_dest() . "/script.php");
+		}
+
+		// Copy Readme
+		if (JPATH_BASE . "/docs/README.md")
+		{
+			$this->_copy(JPATH_BASE . "/docs/README.md", $this->_dest() . "/README");
+		}
 
 		return true;
 	}
@@ -108,6 +151,16 @@ class Component extends Base implements TaskInterface
 		{
 			$this->hasFront = false;
 		}
+
+		if (!file_exists($this->sourceFolder . "/cli"))
+		{
+			$this->hasCli = false;
+		}
+
+		if (!file_exists($this->sourceFolder . "/libraries"))
+		{
+			$this->hasLib = false;
+		}
 	}
 
 	/**
@@ -126,5 +179,87 @@ class Component extends Base implements TaskInterface
 		{
 			$this->_mkdir($this->_dest() . "/components/com_" . $this->_ext());
 		}
+	}
+
+	/**
+	 * Generate the installer xml file for the component
+	 *
+	 * @return  void
+	 */
+	private function createInstaller()
+	{
+		$this->say("Creating component installer");
+
+		$adminFolder = $this->_dest() . "/administrator/components/com_" . $this->_ext();
+		$xmlFile     = $adminFolder . "/" . $this->_ext() . ".xml";
+		$scriptFile  = $adminFolder . "/script.php";
+		$helperFile  = $adminFolder . "/helpers/defines.php";
+
+		// Version & Date Replace
+		$this->taskReplaceInFile($xmlFile)
+			->from(array('##DATE##', '##YEAR##', '##VERSION##'))
+			->to(array($this->getDate(), date('Y'), $this->getConfig()->version))
+			->run();
+
+		if (file_exists($scriptFile))
+		{
+			$this->taskReplaceInFile($scriptFile)
+				->from(array('##DATE##', '##YEAR##', '##VERSION##'))
+				->to(array($this->getDate(), date('Y'), $this->getConfig()->version))
+				->run();
+		}
+
+		if (file_exists($helperFile))
+		{
+			$this->taskReplaceInFile($helperFile)
+				->from(array('##DATE##', '##YEAR##', '##VERSION##'))
+				->to(array($this->getDate(), date('Y'), $this->getConfig()->version))
+				->run();
+		}
+
+		// Files and folders
+		if ($this->hasAdmin)
+		{
+			$f = $this->generateFileList($this->getFiles('backend'));
+
+			$this->taskReplaceInFile($xmlFile)
+				->from('##BACKEND_COMPONENT_FILES##')
+				->to($f)
+				->run();
+
+			// Language files
+			$f = $this->generateLanguageFileList($this->getFiles('backendLanguage'));
+
+			$this->taskReplaceInFile($xmlFile)
+				->from('##BACKEND_LANGUAGE_FILES##')
+				->to($f)
+				->run();
+		}
+
+		if ($this->hasFront)
+		{
+			$f = $this->generateFileList($this->getFiles('frontend'));
+
+			$this->taskReplaceInFile($xmlFile)
+				->from('##FRONTEND_COMPONENT_FILES##')
+				->to($f)
+				->run();
+
+			// Language files
+			$f = $this->generateLanguageFileList($this->getFiles('frontendLanguage'));
+
+			$this->taskReplaceInFile($xmlFile)
+				->from('##FRONTEND_LANGUAGE_FILES##')
+				->to($f)
+				->run();
+		}
+
+		// Media files
+		$f = $this->generateFileList($this->getFiles('media'));
+
+		$this->taskReplaceInFile($xmlFile)
+			->from('##MEDIA_FILES##')
+			->to($f)
+			->run();
 	}
 }

@@ -20,7 +20,7 @@ use JBuild\Tasks\JTask;
 /**
  * The supervisor
  *
- * @package  JBuild\Tasks\Component
+ * @package  JBuild\Tasks\Build
  *
  * @since    1.0.1
  */
@@ -31,6 +31,16 @@ class Extension extends Base implements TaskInterface
 	use buildTasks;
 
 	protected $params = null;
+
+	private $hasComponent = true;
+
+	private $hasModules = true;
+
+	private $hasPlugins = true;
+
+	private $modules = array();
+
+	private $plugins = array();
 
 	/**
 	 * Initialize Build Task
@@ -51,6 +61,91 @@ class Extension extends Base implements TaskInterface
 	{
 		$this->say('Building Extension package');
 
+		$this->analyze();
+
+		// Build component
+		if ($this->hasComponent)
+		{
+			$this->buildComponent($this->params)->run();
+		}
+
+		// Modules
+		if ($this->hasModules)
+		{
+			$path = $this->getSourceFolder() . "/modules";
+
+			// Get every module
+			$hdl = opendir($path);
+
+			while ($entry = readdir($hdl))
+			{
+				// Only folders
+				$p = $path . "/" . $entry;
+
+				if (substr($entry, 0, 1) == '.')
+				{
+					continue;
+				}
+
+				if (!is_file($p))
+				{
+					// Module folder
+					$this->modules[] = $entry;
+					$this->buildModule($entry, $this->params)->run();
+				}
+			}
+
+			closedir($hdl);
+		}
+
+		// Plugins
+		if ($this->hasPlugins)
+		{
+			$path = $this->getSourceFolder() . "/plugins";
+
+			// Get every plugin
+			$hdl = opendir($path);
+
+			while ($entry = readdir($hdl))
+			{
+				// Only folders
+				$p = $path . "/" . $entry;
+
+				if (substr($entry, 0, 1) == '.')
+				{
+					continue;
+				}
+
+				if (!is_file($p))
+				{
+					// Plugin type folder
+					$type = $entry;
+
+					$hdl2 = opendir($p);
+
+					while ($plugin = readdir($hdl2))
+					{
+						// Only folders
+						$p2 = $path . "/" . $entry;
+
+						if (substr($plugin, 0, 1) == '.')
+						{
+							continue;
+						}
+
+						if (!is_file($p2))
+						{
+							$this->plugins[] = "plg_" . $type . "_" . $plugin;
+							$this->buildPlugin($type, $plugin, $this->params)->run();
+						}
+					}
+
+					closedir($hdl2);
+				}
+			}
+
+			closedir($hdl);
+		}
 
 		return true;
 	}
@@ -63,6 +158,21 @@ class Extension extends Base implements TaskInterface
 	private function analyze()
 	{
 		// Check if we have component, module, plugin etc.
+		if (!file_exists($this->getSourceFolder() . "/administrator/components/com_" . $this->_ext())
+			&& !file_exists($this->getSourceFolder() . "/components/com_" . $this->_ext()))
+		{
+			$this->say("Extension has no component");
+			$this->hasComponent = false;
+		}
 
+		if (!file_exists($this->getSourceFolder() . "/modules"))
+		{
+			$this->hasModules = false;
+		}
+
+		if (!file_exists($this->getSourceFolder() . "/plugins"))
+		{
+			$this->hasPlugins = false;
+		}
 	}
 }

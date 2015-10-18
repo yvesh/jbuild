@@ -19,7 +19,7 @@ use JBuild\Tasks\JTask;
 /**
  * Class Language
  *
- * @package  JBuild\Tasks\Component
+ * @package  JBuild\Tasks\Build
  *
  * @since    1.0.1
  */
@@ -29,6 +29,8 @@ class Language extends Base implements TaskInterface
 	use \Robo\Common\TaskIO;
 
 	protected $ext = null;
+
+	protected $type = "com";
 
 	protected $target = null;
 
@@ -40,6 +42,7 @@ class Language extends Base implements TaskInterface
 
 	protected $hasFrontLang = true;
 
+
 	/**
 	 * Initialize Build Task
 	 *
@@ -49,10 +52,12 @@ class Language extends Base implements TaskInterface
 	{
 		parent::__construct();
 
-		$this->adminLangPath = $this->getCodeBase() . "/administrator/language";
-		$this->frontLangPath = $this->getCodeBase() . "/language";
+		$this->adminLangPath = $this->getSourceFolder() . "/administrator/language";
+		$this->frontLangPath = $this->getSourceFolder() . "/language";
 
 		$this->ext = $extension;
+
+		$this->type = substr($extension, 0, 3);
 	}
 
 	/**
@@ -62,27 +67,43 @@ class Language extends Base implements TaskInterface
 	 */
 	public function run()
 	{
-		$this->say("Building language for " . $this->ext);
-
 		$this->analyze();
+
+		if (!$this->hasAdminLang && !$this->hasFrontLang)
+		{
+			// No Language files
+			return true;
+		}
+
+		$this->say("Building language for " . $this->ext . " | Type " . $this->type);
 
 		// Make sure we have the language folders in our target
 		$this->prepareDirectories();
 
-		if ($this->hasAdminLang)
+		$dest = $this->_dest();
+
+		if ($this->type == "mod")
 		{
-			$map = $this->copyLanguage("administrator/language");
+			$dest = $this->_dest() . "/modules/" . $this->ext;
+		}
+		elseif ($this->type == "plg")
+		{
+			$a = explode("_", $this->ext);
+
+			$dest = $this->_dest() . "/plugins/" . $a[1] . "/" . $a[2];
 		}
 
 		if ($this->hasAdminLang)
 		{
-			$map = $this->copyLanguage("language");
+			$map = $this->copyLanguage("administrator/language", $dest);
+			$this->addFiles('backendLanguage', $map);
 		}
 
-		$this->say("Done copying language files");
-
-		// Can't use this - frontend and backend
-		// $this->setResultFiles($map);
+		if ($this->hasFrontLang)
+		{
+			$map = $this->copyLanguage("language", $dest);
+			$this->addFiles('frontendLanguage', $map);
+		}
 
 		return true;
 	}
@@ -94,10 +115,9 @@ class Language extends Base implements TaskInterface
 	 */
 	private function analyze()
 	{
-		// We just check for english here
+		// Just check for english here
 		if (!file_exists($this->adminLangPath . "/en-GB/en-GB." . $this->ext . ".ini"))
 		{
-			$this->say($this->adminLangPath . "/en-GB/en-GB." . $this->ext . ".ini");
 			$this->hasAdminLang = false;
 		}
 
@@ -110,32 +130,50 @@ class Language extends Base implements TaskInterface
 	/**
 	 * Prepare the directory structure
 	 *
-	 * @return  void
+	 * @return  boolean
 	 */
 	private function prepareDirectories()
 	{
-		if ($this->hasAdminLang)
+		if ($this->type == "com")
 		{
-			$this->_mkdir($this->_dest() . "/administrator/language");
+			if ($this->hasAdminLang)
+			{
+				$this->_mkdir($this->_dest() . "/administrator/language");
+			}
+
+			if ($this->hasFrontLang)
+			{
+				$this->_mkdir($this->_dest() . "/language");
+			}
 		}
 
-		if ($this->hasFrontLang)
+		if ($this->type == "mod")
 		{
-			$this->_mkdir($this->_dest() . "/language");
+			$this->_mkdir($this->_dest() . "/modules/" . $this->ext . "/language");
 		}
+
+		if ($this->type == "plg")
+		{
+			$a = explode("_", $this->ext);
+
+			$this->_mkdir($this->_dest() . "/plugins/" . $a[1] . "/" . $a[2] . "/administrator/language");
+		}
+
+		return true;
 	}
 
 	/**
 	 * Copy language files
 	 *
-	 * @param   string  $dir  - The directory (administrator/language or language)
+	 * @param   string  $dir     The directory (administrator/language or language or mod_xy/language etc)
+	 * @param   String  $target  The target directory
 	 *
 	 * @return   array
 	 */
-	public function copyLanguage($dir)
+	public function copyLanguage($dir, $target)
 	{
 		// Equals administrator/language or language
-		$path = $this->getCodeBase() . "/" . $dir;
+		$path = $this->getSourceFolder() . "/" . $dir;
 		$files = array();
 
 		$hdl = opendir($path);
@@ -158,13 +196,13 @@ class Language extends Base implements TaskInterface
 
 					while ($file = readdir($fileHdl))
 					{
-						// Only copy language files for this extension
-						if (substr($file, 0, 1) != '.' && strpos($file, $this->ext))
+						// Only copy language files for this extension (and sys files..)
+						if (substr($file, 0, 1) != '.' && strpos($file, $this->ext . "."))
 						{
 							$files[] = array($entry => $file);
 
 							// Copy file
-							$this->_copy($p . "/" . $file, $this->_dest() . "/" . $dir . "/" . $entry . "/" . $file);
+							$this->_copy($p . "/" . $file, $target . "/" . $dir . "/" . $entry . "/" . $file);
 						}
 					}
 

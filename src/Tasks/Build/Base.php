@@ -28,11 +28,22 @@ class Base extends JTask implements TaskInterface
 	use \Robo\Task\Development\loadTasks;
 	use \Robo\Common\TaskIO;
 
+	/**
+	 * Media files
+	 *
+	 * They need to be static in order to support multiple files and LANGUAGE
+	 *
+	 * @var  array
+	 */
 	protected static $mediaFiles = array();
 
-	protected static $frontFiles = array();
+	protected static $frontendFiles = array();
 
 	protected static $backendFiles = array();
+
+	protected static $frontendLanguageFiles = array();
+
+	protected static $backendLanguageFiles = array();
 
 	protected $resultFiles = array();
 
@@ -71,6 +82,28 @@ class Base extends JTask implements TaskInterface
 	}
 
 	/**
+	 * Retrieve the files
+	 *
+	 * @param   string  $type  Type (media, component etc.)
+	 *
+	 * @return mixed
+	 */
+	public function  getFiles($type)
+	{
+		$f = $type . 'Files';
+
+		if (property_exists($this, $f))
+		{
+			return self::${$f};
+		}
+
+		$this->say('Missing Files: ' . $type);
+
+		return "";
+	}
+
+
+	/**
 	 * Adds Files / Folders to media array
 	 *
 	 * @param   array  $fileArray  Array of files / folders
@@ -91,7 +124,7 @@ class Base extends JTask implements TaskInterface
 	 */
 	public function addFrontendFiles($fileArray)
 	{
-		self::$frontFiles = array_merge(self::$frontFiles, $fileArray);
+		self::$frontendFiles = array_merge(self::$frontendFiles, $fileArray);
 	}
 
 	/**
@@ -106,6 +139,29 @@ class Base extends JTask implements TaskInterface
 		self::$backendFiles = array_merge(self::$backendFiles, $fileArray);
 	}
 
+	/**
+	 * Adds Files / Folders to language array
+	 *
+	 * @param   array  $fileArray  Array of files / folders
+	 *
+	 * @return  void
+	 */
+	public function addFrontendLanguageFiles($fileArray)
+	{
+		self::$frontendLanguageFiles = array_merge(self::$frontendLanguageFiles, $fileArray);
+	}
+
+	/**
+	 * Adds Files / Folders to language array
+	 *
+	 * @param   array  $fileArray  Array of files / folders
+	 *
+	 * @return  void
+	 */
+	public function addBackendLanguageFiles($fileArray)
+	{
+		self::$backendLanguageFiles = array_merge(self::$backendLanguageFiles, $fileArray);
+	}
 
 	/**
 	 * Copies the files and maps them into an array
@@ -165,5 +221,119 @@ class Base extends JTask implements TaskInterface
 	public function setResultFiles($resultFiles)
 	{
 		$this->resultFiles = $resultFiles;
+	}
+
+	/**
+	 * Get the current date (formated for building)
+	 *
+	 * @return  string
+	 */
+	public function getDate()
+	{
+		return date('Y-m-d');
+	}
+
+	/**
+	 * Generate a list of files
+	 *
+	 * @param   array  $files  Files and Folders array
+	 *
+	 * @return  string
+	 */
+	public function generateFileList($files)
+	{
+		if (!count($files))
+		{
+			return "";
+		}
+
+		$text = array();
+
+		foreach ($files as $f)
+		{
+			foreach ($f as $type => $value)
+			{
+				$text[] = "<" . $type . ">" . $value . "</" . $type . ">";
+			}
+		}
+
+		return implode("\n", $text);
+	}
+
+
+	/**
+	 * Generate a list of files
+	 *
+	 * @param   array  $files  Files and Folders array
+	 *
+	 * @return  string
+	 */
+	public function generateLanguageFileList($files)
+	{
+		if (!count($files))
+		{
+			return "";
+		}
+
+		$text = array();
+
+		foreach ($files as $f)
+		{
+			foreach ($f as $tag => $value)
+			{
+				$text[] = '<language tag="' . $tag . '">' . $tag . "/" . $value . "</language>";
+			}
+		}
+
+		return implode("\n", $text);
+	}
+
+	/**
+	 * Generate a list of files for plugins
+	 *
+	 * @param   array  $files  Files and Folders array
+	 *
+	 * @return  string
+	 */
+	public function generatePluginFileList($files, $plugin)
+	{
+		if (!count($files))
+		{
+			return "";
+		}
+
+		$text = array();
+
+		foreach ($files as $f)
+		{
+			foreach ($f as $type => $value)
+			{
+				$p = "";
+
+				if ($value == $plugin . ".php")
+				{
+					$p = ' plugin="' . $plugin . '"';
+
+				}
+
+				$text[] = "<" . $type . $p . ">" . $value . "</" . $type . ">";
+			}
+		}
+
+		return implode("\n", $text);
+	}
+
+	/**
+	 * Reset the files list, before build another part
+	 *
+	 * @return  void
+	 */
+	public function resetFiles()
+	{
+		self::$backendFiles = array();
+		self::$backendLanguageFiles = array();
+		self::$frontendFiles = array();
+		self::$frontendLanguageFiles = array();
+		self::$mediaFiles = array();
 	}
 }

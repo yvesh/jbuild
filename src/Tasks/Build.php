@@ -27,6 +27,7 @@ class Build extends JTask implements TaskInterface
 	use \Robo\Task\Development\loadTasks;
 	use \Robo\Common\TaskIO;
 	use Build\buildTasks;
+	use Deploy\deployTasks;
 
 	/**
 	 * @var array|null
@@ -62,8 +63,26 @@ class Build extends JTask implements TaskInterface
 		// Create directory
 		$this->prepareDistDirectory();
 
-		// Build component
-		$this->buildComponent($this->params)->run();
+		// Build extension
+		$this->buildExtension($this->params)->run();
+
+		// Support multiple deployment methods, separated by spaces
+		$deploy = explode(" ", $this->getConfig()->target);
+
+		if (count($deploy))
+		{
+			foreach ($deploy as $d)
+			{
+				$task = 'deploy' . ucfirst($d);
+
+				$this->{$task}()->run();
+			}
+		}
+
+		// Create symlink to current folder
+		$this->_symlink($this->_dest(), JPATH_BASE . "/dist/current");
+
+		return true;
 	}
 
 	/**
