@@ -62,10 +62,12 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 
 	/**
 	 * Construct
+	 *
+	 * @param   Array  $params  Opt params
 	 */
-	public function __construct()
+	public function __construct($params = array())
 	{
-		// Load only once
+		// Load config only once
 		if (self::$config == null)
 		{
 			// Load config as object
@@ -75,13 +77,29 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 			{
 				$this->say('Error: Config file jbuild.ini not available');
 
-				return;
+				return false;
+			}
+
+			// Are we building a git / dev release?
+			if ($params['dev'])
+			{
+				$res = $this->_exec('git rev-parse --short HEAD');
+
+				$version = $res->getMessage();
+
+				if ($version)
+				{
+					$this->say("Changing version to development version " . $version);
+					self::getConfig()->version = $version;
+				}
 			}
 
 			$target = "/dist/" . $this->getConfig()->extension . "_" . $this->getConfig()->version;
 			$target = str_replace(".", "-", $target);
 
 			self::getConfig()->buildFolder = JPATH_BASE . $target;
+
+			self::getConfig()->params = $params;
 
 			// Date set
 			date_default_timezone_set('UTC');

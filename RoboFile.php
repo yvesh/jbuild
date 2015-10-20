@@ -53,13 +53,13 @@ class RoboFile extends \Robo\Tasks
 	 *
 	 * @return  void
 	 */
-	public function build($params = array())
+	public function build($params = ['dev' => false])
 	{
 		$this->taskBuild($params)->run();
 	}
 
 	/**
-	 * Generate an extension skeleton
+	 * Generate an extension skeleton - not implemented yet
 	 *
 	 * @param   array  $extensions  Extensions to build (com_xy, mod_xy)
 	 *
@@ -68,16 +68,5 @@ class RoboFile extends \Robo\Tasks
 	public function generate($extensions)
 	{
 		$this->taskGenerate($extensions)->run();
-	}
-
-
-	/**
-	 * Minify css files (also done during building)
-	 *
-	 * @return  void
-	 */
-	public function minifyCSS()
-	{
-		// Sample task not in trait
 	}
 }

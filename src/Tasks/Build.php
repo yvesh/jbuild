@@ -41,7 +41,7 @@ class Build extends JTask implements TaskInterface
 	 */
 	public function __construct($params)
 	{
-		parent::__construct();
+		parent::__construct($params);
 
 		$this->params = $params;
 	}
