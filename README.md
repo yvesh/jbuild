@@ -1,4 +1,5 @@
 # JBuild (Robo.li tasks for Joomla! extensions)
+[![Build Status](https://62.75.223.61/api/badge/github.com/yvesh/jbuild/status.svg?branch=master)](https://62.75.223.61/github.com/yvesh/jbuild)
 
 Warning: Currently in early testing stage!
 
