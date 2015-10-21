@@ -85,7 +85,7 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 			{
 				$res = $this->_exec('git rev-parse --short HEAD');
 
-				$version = $res->getMessage();
+				$version = trim($res->getMessage());
 
 				if ($version)
 				{
