@@ -72,7 +72,8 @@ class Library extends Base implements TaskInterface
 
 		$this->prepareDirectory();
 
-		$files = $this->copyTarget($this->source, $this->target);
+		// Libaries are problematic.. we have libraries/name/libraries/name in the end for the build script
+		$files = $this->copyTarget($this->source, $this->target . "/libraries/" . $this->libName);
 
 		$lib = $this->libName;
 
@@ -94,6 +95,11 @@ class Library extends Base implements TaskInterface
 
 		// Copy XML
 		$this->createInstaller($files);
+
+		$xmlFile = $this->target . "/libraries/" . $this->libName . "/" . $this->libName . ".xml";
+
+		// Copy XML to library root
+		$this->_copy($xmlFile, $this->target . "/" . $this->libName . ".xml");
 
 		return true;
 	}
@@ -119,7 +125,7 @@ class Library extends Base implements TaskInterface
 	{
 		$this->say("Creating library installer");
 
-		$xmlFile = $this->target . "/" . $this->libName . ".xml";
+		$xmlFile = $this->target . "/libraries/" . $this->libName . "/" . $this->libName . ".xml";
 
 		// Version & Date Replace
 		$this->taskReplaceInFile($xmlFile)
