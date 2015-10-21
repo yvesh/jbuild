@@ -38,9 +38,22 @@ class Extension extends Base implements TaskInterface
 
 	private $hasPlugins = true;
 
+	private $hasLibraries = true;
+
+	private $hasCBPlugins = true;
+
 	private $modules = array();
 
 	private $plugins = array();
+
+	private $libraries = array();
+
+	/**
+	 * Community Builder plugins
+	 *
+	 * @var array
+	 */
+	private $cbplugins = array();
 
 	/**
 	 * Initialize Build Task
@@ -147,6 +160,34 @@ class Extension extends Base implements TaskInterface
 			closedir($hdl);
 		}
 
+		if ($this->hasLibraries)
+		{
+			$path = $this->getSourceFolder() . "/libraries";
+
+			// Get every library
+			$hdl = opendir($path);
+
+			while ($entry = readdir($hdl))
+			{
+				// Only folders
+				$p = $path . "/" . $entry;
+
+				if (substr($entry, 0, 1) == '.')
+				{
+					continue;
+				}
+
+				if (!is_file($p))
+				{
+					// Library folder
+					$this->libraries[] = $entry;
+					$this->buildLibrary($entry, $this->params)->run();
+				}
+			}
+
+			closedir($hdl);
+		}
+
 		return true;
 	}
 
@@ -173,6 +214,11 @@ class Extension extends Base implements TaskInterface
 		if (!file_exists($this->getSourceFolder() . "/plugins"))
 		{
 			$this->hasPlugins = false;
+		}
+
+		if (!file_exists($this->getSourceFolder() . "/libraries"))
+		{
+			$this->hasLibraries = false;
 		}
 	}
 }

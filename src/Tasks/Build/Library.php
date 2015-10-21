@@ -27,22 +27,31 @@ class Library extends Base implements TaskInterface
 {
 	use \Robo\Task\Development\loadTasks;
 	use \Robo\Common\TaskIO;
+	use buildTasks;
 
 	protected $source = null;
 
 	protected $target = null;
 
-	protected $fileMap = null;
+	protected $libName = null;
 
 	/**
 	 * Initialize Build Task
+	 *
+	 * @param   String  $libName  Name of the library to build
+	 * @param   String  $params   Optional params
 	 */
-	public function __construct()
+	public function __construct($libName, $params)
 	{
 		parent::__construct();
 
-		$this->source = $this->getSourceFolder() . "/libraries";
-		$this->target = $this->_dest() . "/libraries";
+		// Reset files - > new lib
+		$this->resetFiles();
+
+		$this->libName = $libName;
+
+		$this->source = $this->_source() . "/libraries/" . $libName;
+		$this->target = $this->_dest() . "/libraries/" . $libName;
 	}
 
 	/**
@@ -52,7 +61,7 @@ class Library extends Base implements TaskInterface
 	 */
 	public function run()
 	{
-		$this->say("Building library folder " . $this->source);
+		$this->say("Building library folder " . $this->libName);
 
 		if (!file_exists($this->source))
 		{
@@ -63,11 +72,28 @@ class Library extends Base implements TaskInterface
 
 		$this->prepareDirectory();
 
-		$map = $this->copyTarget($this->source, $this->target);
+		$files = $this->copyTarget($this->source, $this->target);
 
-		$this->setResultFiles($map);
+		$lib = $this->libName;
+
+		// Workaround for libraries without lib_
+		if (substr($this->libName, 0, 3) != "lib")
+		{
+			$lib = 'lib_' . $this->libName;
+		}
+
+		// Build media (relative path)
+		$media = $this->buildMedia("media/" . $lib, $lib);
+		$media->run();
+
+		$this->addFiles('media', $media->getResultFiles());
+
+		// Build language files for the component
+		$language = $this->buildLanguage($lib);
+		$language->run();
 
 		// Copy XML
+		$this->createInstaller($files);
 
 		return true;
 	}
@@ -80,5 +106,49 @@ class Library extends Base implements TaskInterface
 	private function prepareDirectory()
 	{
 		$this->_mkdir($this->target);
+	}
+
+	/**
+	 * Generate the installer xml file for the library
+	 *
+	 * @param   array  $files  The library files
+	 *
+	 * @return  void
+	 */
+	private function createInstaller($files)
+	{
+		$this->say("Creating library installer");
+
+		$xmlFile = $this->target . "/" . $this->libName . ".xml";
+
+		// Version & Date Replace
+		$this->taskReplaceInFile($xmlFile)
+			->from(array('@@DATE@@', '##YEAR##', '##VERSION##'))
+			->to(array($this->getDate(), date('Y'), $this->getConfig()->version))
+			->run();
+
+		// Files and folders
+		$f = $this->generateFileList($files);
+
+		$this->taskReplaceInFile($xmlFile)
+			->from('##LIBRARYFILES##')
+			->to($f)
+			->run();
+
+		// Language files
+		$f = $this->generateLanguageFileList($this->getFiles('frontendLanguage'));
+
+		$this->taskReplaceInFile($xmlFile)
+			->from('##FRONTENDLANGUAGEFILES##')
+			->to($f)
+			->run();
+
+		// Media files
+		$f = $this->generateFileList($this->getFiles('media'));
+
+		$this->taskReplaceInFile($xmlFile)
+			->from('##MEDIAPACKAGEFILES##')
+			->to($f)
+			->run();
 	}
 }

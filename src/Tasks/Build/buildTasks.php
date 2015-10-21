@@ -65,13 +65,16 @@ trait buildTasks
 	}
 
 	/**
-	 * Build library folder
+	 * Build a library
+	 *
+	 * @param   String  $libName  Name of the module
+	 * @param   array   $params   Opt params
 	 *
 	 * @return  Library
 	 */
-	protected function buildLibrary()
+	protected function buildLibrary($libName, $params)
 	{
-		return new Library;
+		return new Library($libName, $params);
 	}
 
 	/**
@@ -85,7 +88,7 @@ trait buildTasks
 	}
 
 	/**
-	 * Build Module
+	 * Build a Module
 	 *
 	 * @param   String  $modName  Name of the module
 	 * @param   array   $params   Opt params
@@ -98,7 +101,7 @@ trait buildTasks
 	}
 
 	/**
-	 * Build Plugin
+	 * Build a Plugin
 	 *
 	 * @param   String  $type    Type of the plugin
 	 * @param   String  $name    Name of the plugin

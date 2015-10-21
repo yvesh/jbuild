@@ -40,8 +40,6 @@ class Component extends Base implements TaskInterface
 
 	protected $hasCli = true;
 
-	protected $hasLib = true;
-
 	/**
 	 * Initialize Build Task
 	 *
@@ -97,18 +95,11 @@ class Component extends Base implements TaskInterface
 		$language = $this->buildLanguage("com_" . $this->_ext());
 		$language->run();
 
-		// Library
-		if ($this->hasLib)
-		{
-			$this->buildLibrary()->run();
-		}
-
 		// Cli
 		if ($this->hasCli)
 		{
 			$this->buildCli()->run();
 		}
-
 
 		// Update XML and script.php
 		$this->createInstaller();
@@ -155,11 +146,6 @@ class Component extends Base implements TaskInterface
 		if (!file_exists($this->sourceFolder . "/cli"))
 		{
 			$this->hasCli = false;
-		}
-
-		if (!file_exists($this->sourceFolder . "/libraries"))
-		{
-			$this->hasLib = false;
 		}
 	}
 

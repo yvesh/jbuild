@@ -65,6 +65,13 @@ class Media extends Base implements TaskInterface
 
 			$target = $this->_dest() . "/plugins/" . $a[1] . "/" . $a[2] . "/" . $folder;
 		}
+		elseif ($this->type == 'lib')
+		{
+			// Remove lib before - ugly hack
+			$ex = str_replace("lib_", "" , $this->extName);
+
+			$target = $this->_dest() . "/libraries/" . $ex . "/" . $folder;
+		}
 
 		$this->target = $target;
 	}
@@ -76,7 +83,7 @@ class Media extends Base implements TaskInterface
 	 */
 	public function run()
 	{
-		$this->say("Building media folder " . $this->source);
+		$this->say("Building media folder " . $this->source . " for " . $this->extName);
 
 		if (!file_exists($this->source))
 		{

@@ -92,6 +92,13 @@ class Language extends Base implements TaskInterface
 
 			$dest = $this->_dest() . "/plugins/" . $a[1] . "/" . $a[2];
 		}
+		elseif ($this->type == "lib")
+		{
+			// Remove lib before - ugly hack
+			$ex = str_replace("lib_", "" , $this->ext);
+
+			$dest = $this->_dest() . "/libraries/" . $ex;
+		}
 
 		if ($this->hasAdminLang)
 		{
@@ -190,7 +197,7 @@ class Language extends Base implements TaskInterface
 				if (!is_file($p))
 				{
 					// Make folder at destination
-					$this->_mkdir($this->_dest() . "/" . $dir . "/" . $entry);
+					$this->_mkdir($target . "/" . $dir . "/" . $entry);
 
 					$fileHdl = opendir($p);
 
