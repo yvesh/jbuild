@@ -181,7 +181,7 @@ class Extension extends Base implements TaskInterface
 				{
 					// Library folder
 					$this->libraries[] = $entry;
-					$this->buildLibrary($entry, $this->params)->run();
+					$this->buildLibrary($entry, $this->params, $this->hasComponent)->run();
 				}
 			}
 

@@ -67,14 +67,15 @@ trait buildTasks
 	/**
 	 * Build a library
 	 *
-	 * @param   String  $libName  Name of the module
-	 * @param   array   $params   Opt params
+	 * @param   String  $libName       Name of the module
+	 * @param   array   $params        Opt params
+	 * @param   bool    $hasComponent  has the extension a component (then we need to build differnet)
 	 *
 	 * @return  Library
 	 */
-	protected function buildLibrary($libName, $params)
+	protected function buildLibrary($libName, $params, $hasComponent)
 	{
-		return new Library($libName, $params);
+		return new Library($libName, $params, $hasComponent);
 	}
 
 	/**

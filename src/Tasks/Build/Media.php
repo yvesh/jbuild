@@ -68,7 +68,7 @@ class Media extends Base implements TaskInterface
 		elseif ($this->type == 'lib')
 		{
 			// Remove lib before - ugly hack
-			$ex = str_replace("lib_", "" , $this->extName);
+			$ex = str_replace("lib_", "", $this->extName);
 
 			$target = $this->_dest() . "/libraries/" . $ex . "/" . $folder;
 		}
