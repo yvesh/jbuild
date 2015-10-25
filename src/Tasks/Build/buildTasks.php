@@ -114,4 +114,18 @@ trait buildTasks
 	{
 		return new Plugin($type, $name, $params);
 	}
+
+	/**
+	 * Build a CBPlugin
+	 *
+	 * @param   String  $type    Type of the plugin
+	 * @param   String  $name    Name of the plugin
+	 * @param   array   $params  Opt params
+	 *
+	 * @return  Plugin
+	 */
+	protected function buildCBPlugin($type, $name, $params)
+	{
+		return new CBPlugin($type, $name, $params);
+	}
 }

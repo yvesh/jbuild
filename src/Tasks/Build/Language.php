@@ -67,7 +67,10 @@ class Language extends Base implements TaskInterface
 	 */
 	public function run()
 	{
-		$this->analyze();
+		if ($this->type != "plu")
+		{
+			$this->analyze();
+		}
 
 		if (!$this->hasAdminLang && !$this->hasFrontLang)
 		{
@@ -98,6 +101,20 @@ class Language extends Base implements TaskInterface
 			$ex = str_replace("lib_", "" , $this->ext);
 
 			$dest = $this->_dest() . "/libraries/" . $ex;
+		}
+		elseif ($this->type == "plu")
+		{
+			$a = explode("_", $this->ext);
+
+			$this->say("plug: " . $this->ext);
+
+			$this->say("/components/com_comprofiler/plugin/" . $a[1] . "/plug_" . $a[3]);
+
+			$dest = $this->_dest() . "/components/com_comprofiler/plugin/" . $a[1] . "/plug_" . $a[3];
+
+			$this->ext = "plg_plug_" . $a[3];
+
+			$this->hasFrontLang = false;
 		}
 
 		if ($this->hasAdminLang)
@@ -164,6 +181,13 @@ class Language extends Base implements TaskInterface
 			$a = explode("_", $this->ext);
 
 			$this->_mkdir($this->_dest() . "/plugins/" . $a[1] . "/" . $a[2] . "/administrator/language");
+		}
+
+		if ($this->type == "plug")
+		{
+			$a = explode("_", $this->ext);
+
+			$this->_mkdir($this->_dest() . "/components/com_comprofiler/plugin/" . $a[1] . "/" . $this->ext . "/administrator/language");
 		}
 
 		return true;
