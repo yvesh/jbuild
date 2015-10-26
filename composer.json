@@ -12,9 +12,7 @@
     "psr-4": {"JBuild\\": "src"}
   },
   "require"    : {
-    "php": ">=5.4.0"
-  },
-  "require-dev": {
+    "php": ">=5.4.0",
     "codeception/codeception": "2.0.13",
     "joomla-projects/joomla-browser": "dev-develop",
     "codegyre/robo": "0.5.*",
