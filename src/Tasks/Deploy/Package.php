@@ -259,8 +259,11 @@ class Package extends Base implements TaskInterface
 			}
 		}
 
+		$this->zip->addFile($this->_source() . "/pkg_" . $this->_ext() . ".xml",  "pkg_" . $this->_ext() . ".xml");
+
 		// Close the zip archive
 		$this->zip->close();
+
 
 		return true;
 	}
