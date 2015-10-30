@@ -49,7 +49,6 @@ class Package extends Base implements TaskInterface
 
 		$this->current = JPATH_BASE . "/dist/current";
 
-		$this->zip = new \ZipArchive($this->target, \ZipArchive::CREATE);
 	}
 
 	/**
@@ -208,7 +207,7 @@ class Package extends Base implements TaskInterface
 							foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($p2), \RecursiveIteratorIterator::SELF_FIRST)
 							         as $subfolder)
 							{
-								$this->addFiles($subfolder, $zip);
+								$this->addFiles($subfolder, $zip, $p2);
 							}
 
 							// Close the zip archive
@@ -223,36 +222,16 @@ class Package extends Base implements TaskInterface
 			closedir($hdl);
 		}
 
+		$this->zip = new \ZipArchive($this->target, \ZipArchive::CREATE);
+
 		// Instantiate the zip archive
 		$this->zip->open($this->target, \ZipArchive::CREATE);
 
 		// Process the files to zip
-		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(JPATH_BASE . '/dist/tmp/zips'), \RecursiveIteratorIterator::SELF_FIRST) as $subfolder)
+		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(JPATH_BASE . '/dist/tmp/zips'), \RecursiveIteratorIterator::SELF_FIRST)
+		         as $subfolder)
 		{
-			if ($subfolder->isFile())
-			{
-				// Set all separators to forward slashes for comparison
-				$usefolder = str_replace('\\', '/', $subfolder->getPath());
-
-				// Drop the folder part as we don't want them added to archive
-				$addpath = str_ireplace($this->_dest(), '', $usefolder);
-
-				// Remove preceding slash
-				$findfirst = strpos($addpath, '/');
-
-				if ($findfirst == 0 && $findfirst !== false)
-				{
-					$addpath = substr($addpath, 1);
-				}
-
-				if (strlen($addpath) > 0 || empty($addpath))
-				{
-					$addpath .= '/';
-				}
-
-				$options = array('add_path' => $addpath, 'remove_all_path' => true);
-				$this->zip->addGlob($usefolder . '/*.*', GLOB_BRACE, $options);
-			}
+			$this->addFiles($subfolder, $this->zip, JPATH_BASE . '/dist/tmp/zips');
 		}
 
 		$this->zip->addFile($this->_source() . "/pkg_" . $this->_ext() . ".xml",  "pkg_" . $this->_ext() . ".xml");

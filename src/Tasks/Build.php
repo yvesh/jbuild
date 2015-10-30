@@ -66,6 +66,9 @@ class Build extends JTask implements TaskInterface
 		// Build extension
 		$this->buildExtension($this->params)->run();
 
+		// Create symlink to current folder
+		$this->_symlink($this->_dest(), JPATH_BASE . "/dist/current");
+
 		// Support multiple deployment methods, separated by spaces
 		$deploy = explode(" ", $this->getConfig()->target);
 
@@ -78,9 +81,6 @@ class Build extends JTask implements TaskInterface
 				$this->{$task}()->run();
 			}
 		}
-
-		// Create symlink to current folder
-		$this->_symlink($this->_dest(), JPATH_BASE . "/dist/current");
 
 		return true;
 	}
