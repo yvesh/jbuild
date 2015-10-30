@@ -17,7 +17,7 @@ use Robo\Exception\TaskException;
 use JBuild\Tasks\JTask;
 
 /**
- * Deploy project as Package file 
+ * Deploy project as Package file
  *
  * @since  1.0.2
  */
@@ -45,7 +45,7 @@ class Package extends Base implements TaskInterface
 	{
 		parent::__construct();
 
-		$this->target = JPATH_BASE . "/dist/package-" . $this->_ext() . "-" . $this->getConfig()->version . ".zip";
+		$this->target = JPATH_BASE . "/dist/pkg-" . $this->_ext() . "-" . $this->getConfig()->version . ".zip";
 
 		$this->current = JPATH_BASE . "/dist/current";
 
@@ -266,6 +266,7 @@ class Package extends Base implements TaskInterface
 		// Close the zip archive
 		$this->zip->close();
 
+		$this->_symlink($this->target, JPATH_BASE . "/dist/pkg-" . $this->_ext() . "-current.zip");
 
 		return true;
 	}
