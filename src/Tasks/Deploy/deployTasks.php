@@ -24,4 +24,14 @@ trait deployTasks
 	{
 		return new Zip;
 	}
+
+	/**
+	 * Build extension
+	 *
+	 * @return  Package
+	 */
+	protected function deployPackage()
+	{
+		return new Package();
+	}
 }
