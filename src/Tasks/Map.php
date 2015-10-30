@@ -56,6 +56,7 @@ class Map extends JTask implements TaskInterface
 	 */
 	public function run()
 	{
+
 		$this->say('Mapping ' . $this->getConfig()->extension . " to " . $this->target);
 		$this->say('OS: ' . $this->getOs() . " | Basedir: " . $this->getCodeBase());
 
@@ -69,7 +70,7 @@ class Map extends JTask implements TaskInterface
 		// Get all main dirs
 		while (false !== ($element = readdir($dirHandle)))
 		{
-			if ($element == "." || $element == "..")
+			if (substr($element, 0, 1) == '.')
 			{
 				continue;
 			}
@@ -104,7 +105,7 @@ class Map extends JTask implements TaskInterface
 
 		while (false !== ($element = readdir($libHandle)))
 		{
-			if ($element == "." || $element == "..")
+			if  (substr($element, 0, 1) == '.')
 			{
 				continue;
 			}
@@ -175,26 +176,26 @@ class Map extends JTask implements TaskInterface
 	 *
 	 * @return  void
 	 */
-	private function processLanguage($toDir)
+	private function processLanguage($src, $toDir)
 	{
-		if (is_dir($this->getCodeBase()))
+		if (is_dir($src))
 		{
-			$dirHandle = opendir($this->getCodeBase());
+			$dirHandle = opendir($src);
 
 			while (false !== ($element = readdir($dirHandle)))
 			{
-				if ($element != "." && $element != "..")
+				if (substr($element, 0, 1) == '.')
 				{
-					if (is_dir($this->getCodeBase() . "/" . $element))
+					if (is_dir($src . "/" . $element))
 					{
-						$langDirHandle = opendir($this->getCodeBase() . '/' . $element);
+						$langDirHandle = opendir($src . '/' . $element);
 
 						while (false !== ($file = readdir($langDirHandle)))
 						{
-							if (is_file($this->getCodeBase() . '/' . $element . '/' . $file))
+							if (is_file($src . '/' . $element . '/' . $file))
 							{
 								$this->say($file);
-								$this->symlink($this->getCodeBase() . '/' . $element . '/' . $file, $toDir . '/language/' . $element . '/' . $file);
+								$this->symlink($src . '/' . $element . '/' . $file, $toDir . '/language/' . $element . '/' . $file);
 							}
 						}
 					}
@@ -246,9 +247,9 @@ class Map extends JTask implements TaskInterface
 	 *
 	 * @return  void
 	 */
-	private function processModules($toDir)
+	private function processModules($src, $toDir)
 	{
-		$this->mapDir('modules', $this->getCodeBase(), $toDir);
+		$this->mapDir('modules', $src, $toDir);
 	}
 
 	/**
@@ -258,7 +259,7 @@ class Map extends JTask implements TaskInterface
 	 *
 	 * @return  void
 	 */
-	private function processPlugins($toDir)
+	private function processPlugins($src, $toDir)
 	{
 		if (is_dir($this->getCodeBase()))
 		{
@@ -267,13 +268,13 @@ class Map extends JTask implements TaskInterface
 			// Plugin folder
 			while (false !== ($element = readdir($dirHandle)))
 			{
-				if ($element != "." && $element != "..")
+				if (substr($element, 0, 1) != '.')
 				{
 					$plgDirHandle = opendir($this->getCodeBase() . "/" . $element);
 
 					while (false !== ($plugin = readdir($plgDirHandle)))
 					{
-						if ($plugin != "." && $plugin != "..")
+						if  (substr($element, 0, 1) != '.')
 						{
 							if (is_dir($this->getCodeBase() . "/" . $element . "/" . $plugin))
 							{
@@ -306,7 +307,7 @@ class Map extends JTask implements TaskInterface
 
 			while (false !== ($element = readdir($dirHandle)))
 			{
-				if ($element != "." && $element != "..")
+				if (substr($element, 0, 1) != '.')
 				{
 					$this->symlink($this->getCodeBase() . '/' . $element, $toDir . '/' . $type . '/' . $element);
 				}
