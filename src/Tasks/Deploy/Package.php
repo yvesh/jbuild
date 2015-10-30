@@ -63,7 +63,6 @@ class Package extends Base implements TaskInterface
 		$this->say('Creating package ' . $this->getConfig()->extension . " " . $this->getConfig()->version);
 
 		// Start getting single archives
-
 		if (file_exists(JPATH_BASE . '/dist/tmp'))
 		{
 			$this->_deleteDir(JPATH_BASE . '/dist/tmp');
@@ -133,8 +132,6 @@ class Package extends Base implements TaskInterface
 				if (!is_file($p))
 				{
 					$this->say("Packaging Module " . $entry);
-
-					$this->say("Entry: " . $entry);
 
 					// Package file
 					$zip = new \ZipArchive(JPATH_BASE . "/dist/tmp", \ZipArchive::CREATE);
@@ -239,9 +236,6 @@ class Package extends Base implements TaskInterface
 
 				// Drop the folder part as we don't want them added to archive
 				$addpath = str_ireplace($this->_dest(), '', $usefolder);
-
-				$this->say("ADDPATH " . $addpath);
-				$this->say("USE " . $usefolder);
 
 				// Remove preceding slash
 				$findfirst = strpos($addpath, '/');
