@@ -17,7 +17,7 @@ use Robo\Exception\TaskException;
 use JBuild\Tasks\JTask;
 
 /**
- * Deploy project as Zip
+ * Deploy project as Package file 
  *
  * @since  1.0.2
  */
@@ -60,7 +60,6 @@ class Package extends Base implements TaskInterface
 	public function run()
 	{
 		// TODO improve DRY!
-
 		$this->say('Creating package ' . $this->getConfig()->extension . " " . $this->getConfig()->version);
 
 		// Start getting single archives
@@ -241,6 +240,9 @@ class Package extends Base implements TaskInterface
 				// Drop the folder part as we don't want them added to archive
 				$addpath = str_ireplace($this->_dest(), '', $usefolder);
 
+				$this->say("ADDPATH " . $addpath);
+				$this->say("USE " . $usefolder);
+
 				// Remove preceding slash
 				$findfirst = strpos($addpath, '/');
 
@@ -325,6 +327,7 @@ class Package extends Base implements TaskInterface
 		{
 			// Set all separators to forward slashes for comparison
 			$usefolder = str_replace('\\', '/', $subfolder->getPath());
+
 			// Drop the folder part as we don't want them added to archive
 			$addpath = str_ireplace($path, '', $usefolder);
 

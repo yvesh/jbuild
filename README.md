@@ -15,7 +15,7 @@ Robo.li build scripts, tools and generators for compojoom.com Joomla! extensions
 
 ## Function overview:
 
-  * vendor/bin/robo map destination - Symlinks an extension into an Joomla installation
+  * vendor/bin/robo map destination - Symlinks an extension into an Joomla installation (WIP @rdeutz working solution)
   * vendor/bin/robo build - Builds your extension into an installable Joomla package including replacements
   * vendor/bin/robo generate [--mod_xy --com_xy --plg_system_xy] (not integrated yet)
   
