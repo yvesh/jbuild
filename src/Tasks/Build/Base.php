@@ -183,6 +183,12 @@ class Base extends JTask implements TaskInterface
 			// Ignore hidden files
 			if (substr($entry, 0, 1) != '.')
 			{
+				if (isset($this->getConfig()->exclude)
+					&& in_array($entry, explode(',', $this->getConfig()->exclude)))
+				{
+					continue;
+				}
+
 				if (is_file($p))
 				{
 					$map[] = array("file" => $entry);
@@ -359,7 +365,6 @@ class Base extends JTask implements TaskInterface
 
 		return implode("\n", $text);
 	}
-
 
 	/**
 	 * Reset the files list, before build another part

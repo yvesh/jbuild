@@ -128,4 +128,17 @@ trait buildTasks
 	{
 		return new CBPlugin($type, $name, $params);
 	}
+
+	/**
+	 * Build a Template
+	 *
+	 * @param   String  $templateName  Name of the template
+	 * @param   array   $params   Opt params
+	 *
+	 * @return  Module
+	 */
+	protected function buildTemplate($templateName, $params)
+	{
+		return new Template($templateName, $params);
+	}
 }
