@@ -42,11 +42,15 @@ class Extension extends Base implements TaskInterface
 
 	private $hasCBPlugins = true;
 
+	private $hasTemplates = true;
+
 	private $modules = array();
 
 	private $plugins = array();
 
 	private $libraries = array();
+
+	private $templates = array();
 
 	/**
 	 * Community Builder plugins
@@ -236,6 +240,35 @@ class Extension extends Base implements TaskInterface
 			closedir($hdl);
 		}
 
+		// Templates
+		if ($this->hasTemplates)
+		{
+			$path = $this->_source() . "/templates";
+
+			// Get every module
+			$hdl = opendir($path);
+
+			while ($entry = readdir($hdl))
+			{
+				// Only folders
+				$p = $path . "/" . $entry;
+
+				if (substr($entry, 0, 1) == '.')
+				{
+					continue;
+				}
+
+				if (!is_file($p))
+				{
+					// Template folder
+					$this->templates[] = $entry;
+					$this->buildTemplate($entry, $this->params)->run();
+				}
+			}
+
+			closedir($hdl);
+		}
+
 		return true;
 	}
 
@@ -262,6 +295,11 @@ class Extension extends Base implements TaskInterface
 		if (!file_exists($this->_source() . "/plugins"))
 		{
 			$this->hasPlugins = false;
+		}
+
+		if (!file_exists($this->_source() . "/templates"))
+		{
+			$this->hasTemplates = false;
 		}
 
 		if (!file_exists($this->_source() . "/libraries"))

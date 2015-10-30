@@ -116,6 +116,12 @@ class Language extends Base implements TaskInterface
 
 			$this->hasFrontLang = false;
 		}
+		elseif ($this->type == "tpl")
+		{
+			$a = explode("_", $this->ext);
+
+			$dest = $this->_dest() . "/templates/" . $a[1];
+		}
 
 		if ($this->hasAdminLang)
 		{
