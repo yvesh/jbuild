@@ -44,7 +44,7 @@ trait metricsTasks # extends Tasks
             'standard' => $style
         ];
 
-        $this->taskMetrics($params)->codeStyle(false);
+        $this->taskMetrics($params)->codestyle(false);
     }
 
     /**
@@ -52,7 +52,7 @@ trait metricsTasks # extends Tasks
      */
     public function metricsMessdetect()
     {
-        $this->taskMetrics([])->messDetect(false);
+        $this->taskMetrics([])->messdetect(false);
     }
 
     /**
@@ -73,7 +73,7 @@ trait metricsTasks # extends Tasks
             'standard' => $style
         ];
 
-        $this->taskMetrics($params)->codeStyle(true);
+        $this->taskMetrics($params)->codestyle(true);
     }
 
     /**
@@ -81,6 +81,6 @@ trait metricsTasks # extends Tasks
      */
     public function checkMessdetect()
     {
-        $this->taskMetrics([])->messDetect(true);
+        $this->taskMetrics([])->messdetect(true);
     }
 }

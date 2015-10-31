@@ -32,11 +32,11 @@ class Metrics extends JTask implements TaskInterface
         $this->say('Not implemented yet');
         $this->say(print_r($this->getConfig()->params, true));
 
-        $this->codeStyle($bail);
-        $this->messDetect($bail);
+        $this->codestyle($bail);
+        $this->messdetect($bail);
     }
 
-    public function codeStyle($bail = false)
+    public function codestyle($bail = false)
     {
         if ((bool) $bail)
         {
@@ -48,7 +48,7 @@ class Metrics extends JTask implements TaskInterface
         }
     }
 
-    public function messDetect($bail = false)
+    public function messdetect($bail = false)
     {
         if ((bool) $bail)
         {
