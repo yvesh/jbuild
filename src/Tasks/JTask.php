@@ -71,7 +71,7 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 		if (self::$config == null)
 		{
 			// Load config as object
-			self::$config = json_decode(json_encode(parse_ini_file('jbuild.ini')), false);
+			self::$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini')), false);
 
 			if (!self::$config)
 			{

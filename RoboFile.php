@@ -23,8 +23,6 @@ require_once JPATH_BASE . '/vendor/autoload.php';
  */
 class RoboFile extends \Robo\Tasks
 {
-	use \JBuild\Tasks\loadTasks;
-
 	/**
 	 * Initialize Robo
 	 */
@@ -37,13 +35,12 @@ class RoboFile extends \Robo\Tasks
 	 * Map into Joomla installation.
 	 *
 	 * @param   String   $target    The target joomla instance
-	 * @param   boolean  $override  Override existing mappings?
 	 *
 	 * @return  void
 	 */
-	public function map($target, $override = true)
+	public function map($target)
 	{
-		$this->taskMap($target)->run();
+		(new \JBuild\Tasks\Map($target))->run();
 	}
 
 	/**
@@ -55,7 +52,7 @@ class RoboFile extends \Robo\Tasks
 	 */
 	public function build($params = ['dev' => false])
 	{
-		$this->taskBuild($params)->run();
+		(new \JBuild\Tasks\Build($params))->run();
 	}
 
 	/**
@@ -67,6 +64,6 @@ class RoboFile extends \Robo\Tasks
 	 */
 	public function generate($extensions)
 	{
-		$this->taskGenerate($extensions)->run();
+		(new \JBuild\Tasks\Generate($extensions))->run();
 	}
 }
