@@ -10,10 +10,8 @@
 
 namespace JBuild\Tasks;
 
-use Robo\Result;
-use Robo\Task\BaseTask;
 use Robo\Contract\TaskInterface;
-use Robo\Exception\TaskException;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 /**
  * Class JTask - Base class for our tasks
@@ -59,59 +57,9 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	 */
 	public function __construct($params = array())
 	{
-		// Load config only once
-		if (self::$config == null)
-		{
-			// Load config as object
-			self::$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini')), false);
-
-			if (!self::$config)
-			{
-				$this->say('Error: Config file jbuild.ini not available');
-
-				return false;
-			}
-
-			// Are we building a git / dev release?
-			if ($params['dev'])
-			{
-				$res = $this->_exec('git rev-parse --short HEAD');
-
-				$version = trim($res->getMessage());
-
-				if ($version)
-				{
-					$this->say("Changing version to development version " . $version);
-					self::getConfig()->version = $version;
-				}
-			}
-
-			$target = "/dist/" . $this->getConfig()->extension . "_" . $this->getConfig()->version;
-			$target = str_replace(".", "-", $target);
-
-			self::getConfig()->buildFolder = JPATH_BASE . $target;
-
-			self::getConfig()->params = $params;
-
-			// Date set
-			date_default_timezone_set('UTC');
-		}
-
-		// Detect operating system
-		$this->os = strtoupper(substr(PHP_OS, 0, 3));
-
-		if ($this->os === 'WIN')
-		{
-			$this->extension = '.exe';
-		}
-
-		// Source folder
-		$this->sourceFolder = JPATH_BASE . "/" . $this->getConfig()->source;
-
-		if (!is_dir($this->sourceFolder))
-		{
-			$this->say('Warning - Directory: ' . $this->sourceFolder . ' is not available');
-		}
+		$this->loadConfiguration($params);
+		$this->determineOperatingSystem();
+		$this->determineSourceFolder();
 	}
 
 	/**
@@ -213,5 +161,78 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	public function _source()
 	{
 		return $this->getSourceFolder();
+	}
+
+	private function determineSourceFolder()
+	{
+// Source folder
+		$this->sourceFolder = JPATH_BASE . "/" . $this->getConfig()->source;
+
+		if (!is_dir($this->sourceFolder)) {
+			$this->say('Warning - Directory: ' . $this->sourceFolder . ' is not available');
+		}
+	}
+
+	private function determineOperatingSystem()
+	{
+// Detect operating system
+		$this->os = strtoupper(substr(PHP_OS, 0, 3));
+
+		if ($this->os === 'WIN') {
+			$this->extension = '.exe';
+		}
+	}
+
+	/**
+	 * Load config
+	 *
+	 * @param $params
+	 * @return bool
+	 */
+	private function loadConfiguration($params)
+	{
+		if (!is_null(self::$config)) {
+			return true;
+		}
+
+		// Load config as object
+		self::$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini')), false);
+
+		if (!self::$config) {
+			$this->say('Error: Config file jbuild.ini not available');
+
+			throw new FileNotFoundException('Config file jbuild.ini not available');
+		}
+
+		// Are we building a git / dev release?
+		if ($this->isDevelopmentVersion($params)) {
+			$res = $this->_exec('git rev-parse --short HEAD');
+
+			$version = trim($res->getMessage());
+
+			if ($version) {
+				$this->say("Changing version to development version " . $version);
+				self::getConfig()->version = $version;
+			}
+		}
+
+		$target = "/dist/" . $this->getConfig()->extension . "_" . $this->getConfig()->version;
+		$target = str_replace(".", "-", $target);
+
+		self::getConfig()->buildFolder = JPATH_BASE . $target;
+
+		self::getConfig()->params = $params;
+
+		// Date set
+		date_default_timezone_set('UTC');
+	}
+
+	/**
+	 * @param $params
+	 * @return mixed
+	 */
+	private function isDevelopmentVersion($params)
+	{
+		return isset($params['dev']) ? $params['dev'] : false;
 	}
 }
