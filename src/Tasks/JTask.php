@@ -216,8 +216,7 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 			}
 		}
 
-		$target = "/dist/" . $this->getConfig()->extension . "_" . $this->getConfig()->version;
-		$target = str_replace(".", "-", $target);
+		$target = "/dist/" . $this->getConfig()->extension . "-" . $this->getConfig()->version;
 
 		self::getConfig()->buildFolder = JPATH_BASE . $target;
 
