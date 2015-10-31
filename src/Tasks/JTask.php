@@ -48,14 +48,6 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	 * The source folder
 	 *
 	 * @var    string
-	 * @deprecated  Use source folder instead
-	 */
-	protected $codeBase = '';
-
-	/**
-	 * The source folder
-	 *
-	 * @var    string
 	 */
 	protected $sourceFolder = '';
 
@@ -115,9 +107,6 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 
 		// Source folder
 		$this->sourceFolder = JPATH_BASE . "/" . $this->getConfig()->source;
-
-		// Alias
-		$this->codeBase = $this->sourceFolder;
 
 		if (!is_dir($this->sourceFolder))
 		{
