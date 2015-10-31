@@ -32,6 +32,8 @@ class Package extends Base implements TaskInterface
 
 	private $hasModules = true;
 
+	private $hasTemplates = true;
+
 	private $hasPlugins = true;
 
 	private $hasLibraries = true;
@@ -222,6 +224,49 @@ class Package extends Base implements TaskInterface
 			closedir($hdl);
 		}
 
+		if ($this->hasTemplates)
+		{
+			$path = $this->current . "/templates";
+
+			// Get every module
+			$hdl = opendir($path);
+
+			while ($entry = readdir($hdl))
+			{
+				// Only folders
+				$p = $path . "/" . $entry;
+
+				if (substr($entry, 0, 1) == '.')
+				{
+					continue;
+				}
+
+				if (!is_file($p))
+				{
+					$this->say("Packaging Template " . $entry);
+
+					// Package file
+					$zip = new \ZipArchive(JPATH_BASE . "/dist/tmp", \ZipArchive::CREATE);
+
+					$zip->open(JPATH_BASE . '/dist/tmp/zips/tpl_' . $entry . '.zip', \ZipArchive::CREATE);
+
+					$this->say("Template " . $p);
+
+					// Process the files to zip
+					foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($p), \RecursiveIteratorIterator::SELF_FIRST)
+					         as $subfolder)
+					{
+						$this->addFiles($subfolder, $zip, $p);
+					}
+
+					// Close the zip archive
+					$zip->close();
+				}
+			}
+
+			closedir($hdl);
+		}
+
 		$this->zip = new \ZipArchive($this->target, \ZipArchive::CREATE);
 
 		// Instantiate the zip archive
@@ -268,6 +313,11 @@ class Package extends Base implements TaskInterface
 		if (!file_exists($this->current . "/plugins"))
 		{
 			$this->hasPlugins = false;
+		}
+
+		if (!file_exists($this->current . "/templates"))
+		{
+			$this->hasTemplates = false;
 		}
 
 		if (!file_exists($this->current . "/libraries"))
