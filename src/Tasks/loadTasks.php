@@ -10,8 +10,12 @@
 
 namespace JBuild\Tasks;
 
+use JBuild\Tasks\Metrics\metricsTasks;
+
 trait loadTasks
 {
+    use metricsTasks;
+
     /**
      * Map Task
      *

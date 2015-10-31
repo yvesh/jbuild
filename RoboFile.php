@@ -8,8 +8,6 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace JBuild;
-
 use JBuild\Tasks\loadTasks;
 
 if (!defined('JPATH_BASE'))
@@ -21,9 +19,7 @@ if (!defined('JPATH_BASE'))
 require_once JPATH_BASE . '/vendor/autoload.php';
 
 /**
- * Standalone RoboFile for JBuild
- *
- * @since  5.3
+ * Sample RoboFile - adjust to your needs
  */
 class RoboFile extends \Robo\Tasks
 {
@@ -71,19 +67,5 @@ class RoboFile extends \Robo\Tasks
 	public function generate($extensions)
 	{
 		(new Tasks\Generate($extensions))->run();
-	}
-
-	public function metrics($subtask = null)
-	{
-		if ($subtask == 'codestyle')
-		{
-			$task = new Tasks\Metrics\CodeStyle();
-		}
-		else
-		{
-			throw new \InvalidArgumentException;
-		}
-
-		$task->run();
 	}
 }
