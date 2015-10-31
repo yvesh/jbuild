@@ -89,7 +89,7 @@ class Extension extends Base implements TaskInterface
 		// Modules
 		if ($this->hasModules)
 		{
-			$path = $this->_source() . "/modules";
+			$path = $this->getSourceFolder() . "/modules";
 
 			// Get every module
 			$hdl = opendir($path);
@@ -118,7 +118,7 @@ class Extension extends Base implements TaskInterface
 		// Plugins
 		if ($this->hasPlugins)
 		{
-			$path = $this->_source() . "/plugins";
+			$path = $this->getSourceFolder() . "/plugins";
 
 			// Get every plugin
 			$hdl = opendir($path);
@@ -166,7 +166,7 @@ class Extension extends Base implements TaskInterface
 
 		if ($this->hasLibraries)
 		{
-			$path = $this->_source() . "/libraries";
+			$path = $this->getSourceFolder() . "/libraries";
 
 			// Get every library
 			$hdl = opendir($path);
@@ -194,7 +194,7 @@ class Extension extends Base implements TaskInterface
 
 		if ($this->hasCBPlugins)
 		{
-			$path = $this->_source() . "/components/com_comprofiler/plugin";
+			$path = $this->getSourceFolder() . "/components/com_comprofiler/plugin";
 
 			// Get every plugin
 			$hdl = opendir($path);
@@ -243,7 +243,7 @@ class Extension extends Base implements TaskInterface
 		// Templates
 		if ($this->hasTemplates)
 		{
-			$path = $this->_source() . "/templates";
+			$path = $this->getSourceFolder() . "/templates";
 
 			// Get every module
 			$hdl = opendir($path);
@@ -280,34 +280,34 @@ class Extension extends Base implements TaskInterface
 	private function analyze()
 	{
 		// Check if we have component, module, plugin etc.
-		if (!file_exists($this->_source() . "/administrator/components/com_" . $this->_ext())
-			&& !file_exists($this->_source() . "/components/com_" . $this->_ext()))
+		if (!file_exists($this->getSourceFolder() . "/administrator/components/com_" . $this->getExtensionName())
+			&& !file_exists($this->getSourceFolder() . "/components/com_" . $this->getExtensionName()))
 		{
 			$this->say("Extension has no component");
 			$this->hasComponent = false;
 		}
 
-		if (!file_exists($this->_source() . "/modules"))
+		if (!file_exists($this->getSourceFolder() . "/modules"))
 		{
 			$this->hasModules = false;
 		}
 
-		if (!file_exists($this->_source() . "/plugins"))
+		if (!file_exists($this->getSourceFolder() . "/plugins"))
 		{
 			$this->hasPlugins = false;
 		}
 
-		if (!file_exists($this->_source() . "/templates"))
+		if (!file_exists($this->getSourceFolder() . "/templates"))
 		{
 			$this->hasTemplates = false;
 		}
 
-		if (!file_exists($this->_source() . "/libraries"))
+		if (!file_exists($this->getSourceFolder() . "/libraries"))
 		{
 			$this->hasLibraries = false;
 		}
 
-		if (!file_exists($this->_source() . "/components/com_comprofiler"))
+		if (!file_exists($this->getSourceFolder() . "/components/com_comprofiler"))
 		{
 			$this->hasCBPlugins = false;
 		}

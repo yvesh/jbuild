@@ -42,7 +42,7 @@ class Cli extends Base implements TaskInterface
 		parent::__construct();
 
 		$this->source = $this->getSourceFolder() . "/cli";
-		$this->target = $this->_dest() . "/cli";
+		$this->target = $this->getBuildFolder() . "/cli";
 	}
 
 	/**

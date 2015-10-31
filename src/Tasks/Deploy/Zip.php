@@ -37,7 +37,7 @@ class Zip extends Base implements TaskInterface
 	{
 		parent::__construct();
 
-		$this->target = JPATH_BASE . "/dist/" . $this->_ext() . "-" . $this->getConfig()->version . ".zip";
+		$this->target = JPATH_BASE . "/dist/" . $this->getExtensionName() . "-" . $this->getConfig()->version . ".zip";
 
 		$this->zip = new \ZipArchive($this->target, \ZipArchive::CREATE);
 	}
@@ -55,7 +55,7 @@ class Zip extends Base implements TaskInterface
 		$this->zip->open($this->target, \ZipArchive::CREATE);
 
 		// Process the files to zip
-		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->_dest()), \RecursiveIteratorIterator::SELF_FIRST) as $subfolder)
+		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->getBuildFolder()), \RecursiveIteratorIterator::SELF_FIRST) as $subfolder)
 		{
 			if ($subfolder->isFile())
 			{
@@ -63,7 +63,7 @@ class Zip extends Base implements TaskInterface
 				$usefolder = str_replace('\\', '/', $subfolder->getPath());
 
 				// Drop the folder part as we don't want them added to archive
-				$addpath = str_ireplace($this->_dest(), '', $usefolder);
+				$addpath = str_ireplace($this->getBuildFolder(), '', $usefolder);
 
 				// Remove preceding slash
 				$findfirst = strpos($addpath, '/');

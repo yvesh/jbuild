@@ -55,8 +55,8 @@ class CBPlugin extends Base implements TaskInterface
 		$this->plgName = $name;
 		$this->plgType = $type;
 
-		$this->source = $this->_source() . "/components/com_comprofiler/plugin/" . $type . "/" . $name;
-		$this->target = $this->_dest() . "/components/com_comprofiler/plugin/" . $type . "/" . $name;
+		$this->source = $this->getSourceFolder() . "/components/com_comprofiler/plugin/" . $type . "/" . $name;
+		$this->target = $this->getBuildFolder() . "/components/com_comprofiler/plugin/" . $type . "/" . $name;
 	}
 
 	/**

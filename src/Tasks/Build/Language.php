@@ -83,24 +83,24 @@ class Language extends Base implements TaskInterface
 		// Make sure we have the language folders in our target
 		$this->prepareDirectories();
 
-		$dest = $this->_dest();
+		$dest = $this->getBuildFolder();
 
 		if ($this->type == "mod")
 		{
-			$dest = $this->_dest() . "/modules/" . $this->ext;
+			$dest = $this->getBuildFolder() . "/modules/" . $this->ext;
 		}
 		elseif ($this->type == "plg")
 		{
 			$a = explode("_", $this->ext);
 
-			$dest = $this->_dest() . "/plugins/" . $a[1] . "/" . $a[2];
+			$dest = $this->getBuildFolder() . "/plugins/" . $a[1] . "/" . $a[2];
 		}
 		elseif ($this->type == "lib")
 		{
 			// Remove lib before - ugly hack
 			$ex = str_replace("lib_", "" , $this->ext);
 
-			$dest = $this->_dest() . "/libraries/" . $ex;
+			$dest = $this->getBuildFolder() . "/libraries/" . $ex;
 		}
 		elseif ($this->type == "plu")
 		{
@@ -110,7 +110,7 @@ class Language extends Base implements TaskInterface
 
 			$this->say("/components/com_comprofiler/plugin/" . $a[1] . "/plug_" . $a[3]);
 
-			$dest = $this->_dest() . "/components/com_comprofiler/plugin/" . $a[1] . "/plug_" . $a[3];
+			$dest = $this->getBuildFolder() . "/components/com_comprofiler/plugin/" . $a[1] . "/plug_" . $a[3];
 
 			$this->ext = "plg_plug_" . $a[3];
 
@@ -120,7 +120,7 @@ class Language extends Base implements TaskInterface
 		{
 			$a = explode("_", $this->ext);
 
-			$dest = $this->_dest() . "/templates/" . $a[1];
+			$dest = $this->getBuildFolder() . "/templates/" . $a[1];
 		}
 
 		if ($this->hasAdminLang)
@@ -168,32 +168,32 @@ class Language extends Base implements TaskInterface
 		{
 			if ($this->hasAdminLang)
 			{
-				$this->_mkdir($this->_dest() . "/administrator/language");
+				$this->_mkdir($this->getBuildFolder() . "/administrator/language");
 			}
 
 			if ($this->hasFrontLang)
 			{
-				$this->_mkdir($this->_dest() . "/language");
+				$this->_mkdir($this->getBuildFolder() . "/language");
 			}
 		}
 
 		if ($this->type == "mod")
 		{
-			$this->_mkdir($this->_dest() . "/modules/" . $this->ext . "/language");
+			$this->_mkdir($this->getBuildFolder() . "/modules/" . $this->ext . "/language");
 		}
 
 		if ($this->type == "plg")
 		{
 			$a = explode("_", $this->ext);
 
-			$this->_mkdir($this->_dest() . "/plugins/" . $a[1] . "/" . $a[2] . "/administrator/language");
+			$this->_mkdir($this->getBuildFolder() . "/plugins/" . $a[1] . "/" . $a[2] . "/administrator/language");
 		}
 
 		if ($this->type == "plug")
 		{
 			$a = explode("_", $this->ext);
 
-			$this->_mkdir($this->_dest() . "/components/com_comprofiler/plugin/" . $a[1] . "/" . $this->ext . "/administrator/language");
+			$this->_mkdir($this->getBuildFolder() . "/components/com_comprofiler/plugin/" . $a[1] . "/" . $this->ext . "/administrator/language");
 		}
 
 		return true;

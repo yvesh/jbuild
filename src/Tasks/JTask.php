@@ -36,11 +36,11 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	protected $os = '';
 
 	/**
-	 * The file extension (OS Support) - should be renamed
+	 * The file extension (OS Support)
 	 *
 	 * @var    string
 	 */
-	protected $extension = '';
+	protected $fileExtension = '';
 
 	/**
 	 * The source folder
@@ -69,11 +69,11 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	 */
 	public function checkFolders()
 	{
-		$dirHandle = opendir($this->getCodeBase());
+		$dirHandle = opendir($this->getSourceFolder());
 
 		if ($dirHandle === false)
 		{
-			$this->printTaskError('Can not open ' . $this->getCodeBase() . ' for parsing');
+			$this->printTaskError('Can not open ' . $this->getSourceFolder() . ' for parsing');
 
 			return false;
 		}
@@ -92,16 +92,6 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	}
 
 	/**
-	 * Get the extensions for which we run this script
-	 *
-	 * @return  string
-	 */
-	public function getRunextension()
-	{
-		return $this->extension;
-	}
-
-	/**
 	 * Get the build config
 	 *
 	 * @return  object
@@ -109,18 +99,6 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	public function getConfig()
 	{
 		return self::$config;
-	}
-
-	/**
-	 * Get the source folder path
-	 *
-	 * @deprecated  Use getSourceFolder instead
-	 *
-	 * @return  string  absolute path
-	 */
-	public function getCodeBase()
-	{
-		return $this->getSourceFolder();
 	}
 
 	/**
@@ -138,7 +116,7 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	 *
 	 * @return   string
 	 */
-	public function _ext()
+	public function getExtensionName()
 	{
 		return strtolower($this->getConfig()->extension);
 	}
@@ -148,24 +126,13 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	 *
 	 * @return   string
 	 */
-	public function _dest()
+	public function getBuildFolder()
 	{
 		return $this->getConfig()->buildFolder;
 	}
 
-	/**
-	 * Get the Source folder
-	 *
-	 * @return   string
-	 */
-	public function _source()
-	{
-		return $this->getSourceFolder();
-	}
-
 	private function determineSourceFolder()
 	{
-// Source folder
 		$this->sourceFolder = JPATH_BASE . "/" . $this->getConfig()->source;
 
 		if (!is_dir($this->sourceFolder)) {
@@ -175,11 +142,10 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 
 	private function determineOperatingSystem()
 	{
-// Detect operating system
 		$this->os = strtoupper(substr(PHP_OS, 0, 3));
 
 		if ($this->os === 'WIN') {
-			$this->extension = '.exe';
+			$this->fileExtension = '.exe';
 		}
 	}
 
@@ -196,9 +162,9 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 		}
 
 		// Load config as object
-		self::$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini')), false);
+		$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini')), false);
 
-		if (!self::$config) {
+		if (!$config) {
 			$this->say('Error: Config file jbuild.ini not available');
 
 			throw new FileNotFoundException('Config file jbuild.ini not available');
@@ -212,15 +178,14 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 
 			if ($version) {
 				$this->say("Changing version to development version " . $version);
-				self::getConfig()->version = $version;
+				$config->version = $version;
 			}
 		}
 
-		$target = "/dist/" . $this->getConfig()->extension . "-" . $this->getConfig()->version;
+		$config->buildFolder = JPATH_BASE . $this->determineTarget($config);
+		$config->params      = $params;
 
-		self::getConfig()->buildFolder = JPATH_BASE . $target;
-
-		self::getConfig()->params = $params;
+		self::$config = $config;
 
 		// Date set
 		date_default_timezone_set('UTC');
@@ -233,5 +198,24 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 	private function isDevelopmentVersion($params)
 	{
 		return isset($params['dev']) ? $params['dev'] : false;
+	}
+
+	/**
+	 * @param $config
+	 * @return string
+	 */
+	private function determineTarget($config)
+	{
+		if (!isset($config->extension))
+		{
+			return 'unnamed';
+		}
+
+		$target = "/dist/" . $config->extension;
+		if (!empty($config->version)) {
+			$target = "/dist/" . $config->extension . "-" . $config->version;
+			return $target;
+		}
+		return $target;
 	}
 }

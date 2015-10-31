@@ -47,7 +47,7 @@ class Package extends Base implements TaskInterface
 	{
 		parent::__construct();
 
-		$this->target = JPATH_BASE . "/dist/pkg-" . $this->_ext() . "-" . $this->getConfig()->version . ".zip";
+		$this->target = JPATH_BASE . "/dist/pkg-" . $this->getExtensionName() . "-" . $this->getConfig()->version . ".zip";
 
 		$this->current = JPATH_BASE . "/dist/current";
 
@@ -77,7 +77,7 @@ class Package extends Base implements TaskInterface
 		{
 			$comZip = new \ZipArchive(JPATH_BASE . "/dist/tmp", \ZipArchive::CREATE);
 
-			$comZip->open(JPATH_BASE . '/dist/tmp/zips/com_' . $this->_ext() . '.zip', \ZipArchive::CREATE);
+			$comZip->open(JPATH_BASE . '/dist/tmp/zips/com_' . $this->getExtensionName() . '.zip', \ZipArchive::CREATE);
 
 			// Process the files to zip
 			foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->current . "/components"), \RecursiveIteratorIterator::SELF_FIRST)
@@ -107,7 +107,7 @@ class Package extends Base implements TaskInterface
 				$this->addFiles($subfolder, $comZip);
 			}
 
-			$comZip->addFile($this->current . "/" . $this->_ext() . ".xml", $this->_ext() . ".xml");
+			$comZip->addFile($this->current . "/" . $this->getExtensionName() . ".xml", $this->getExtensionName() . ".xml");
 
 			// Close the zip archive
 			$comZip->close();
@@ -279,12 +279,12 @@ class Package extends Base implements TaskInterface
 			$this->addFiles($subfolder, $this->zip, JPATH_BASE . '/dist/tmp/zips');
 		}
 
-		$this->zip->addFile($this->_source() . "/pkg_" . $this->_ext() . ".xml",  "pkg_" . $this->_ext() . ".xml");
+		$this->zip->addFile($this->getSourceFolder() . "/pkg_" . $this->getExtensionName() . ".xml",  "pkg_" . $this->getExtensionName() . ".xml");
 
 		// Close the zip archive
 		$this->zip->close();
 
-		$this->_symlink($this->target, JPATH_BASE . "/dist/pkg-" . $this->_ext() . "-current.zip");
+		$this->_symlink($this->target, JPATH_BASE . "/dist/pkg-" . $this->getExtensionName() . "-current.zip");
 
 		return true;
 	}
@@ -297,8 +297,8 @@ class Package extends Base implements TaskInterface
 	private function analyze()
 	{
 		// Check if we have component, module, plugin etc.
-		if (!file_exists($this->current . "/administrator/components/com_" . $this->_ext())
-			&& !file_exists($this->current . "/components/com_" . $this->_ext())
+		if (!file_exists($this->current . "/administrator/components/com_" . $this->getExtensionName())
+			&& !file_exists($this->current . "/components/com_" . $this->getExtensionName())
 		)
 		{
 			$this->say("Extension has no component");

@@ -44,8 +44,8 @@ class Module extends Base implements TaskInterface
 	{
 		parent::__construct();
 
-		$this->adminPath = $this->getCodeBase() . "/administrator/components/com_" . $this->_ext();
-		$this->frontPath = $this->getCodeBase() . "/components/com_" . $this->_ext();
+		$this->adminPath = $this->getSourceFolder() . "/administrator/components/com_" . $this->getExtensionName();
+		$this->frontPath = $this->getSourceFolder() . "/components/com_" . $this->getExtensionName();
 	}
 
 	/**
@@ -65,20 +65,20 @@ class Module extends Base implements TaskInterface
 
 		if ($this->hasAdmin)
 		{
-			$adminFiles = $this->copyTarget($this->adminPath, $this->_dest() . "/administrator/components/com_" . $this->_ext());
+			$adminFiles = $this->copyTarget($this->adminPath, $this->getBuildFolder() . "/administrator/components/com_" . $this->getExtensionName());
 
 			$this->addFiles('backend', $adminFiles);
 		}
 
 		if ($this->hasFront)
 		{
-			$frontendFiles = $this->copyTarget($this->frontPath, $this->_dest() . "/components/com_" . $this->_ext());
+			$frontendFiles = $this->copyTarget($this->frontPath, $this->getBuildFolder() . "/components/com_" . $this->getExtensionName());
 
 			$this->addFiles('frontend', $frontendFiles);
 		}
 
 		// Build media (relative path)
-		$media = $this->buildMedia("media/com_" . $this->_ext());
+		$media = $this->buildMedia("media/com_" . $this->getExtensionName());
 		$media->run();
 
 		$this->addFiles('media', $media->getResultFiles());
@@ -116,12 +116,12 @@ class Module extends Base implements TaskInterface
 	{
 		if ($this->hasAdmin)
 		{
-			$this->_mkdir($this->_dest() . "/administrator/components/com_" . $this->_ext());
+			$this->_mkdir($this->getBuildFolder() . "/administrator/components/com_" . $this->getExtensionName());
 		}
 
 		if ($this->hasFront)
 		{
-			$this->_mkdir($this->_dest() . "/components/com_" . $this->_ext());
+			$this->_mkdir($this->getBuildFolder() . "/components/com_" . $this->getExtensionName());
 		}
 	}
 }

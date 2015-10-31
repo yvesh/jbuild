@@ -51,8 +51,8 @@ class Template extends Base implements TaskInterface
 
 		$this->templateName = $templateName;
 
-		$this->source = $this->_source() . "/templates/" . $templateName;
-		$this->target = $this->_dest() . "/templates/" . $templateName;
+		$this->source = $this->getSourceFolder() . "/templates/" . $templateName;
+		$this->target = $this->getBuildFolder() . "/templates/" . $templateName;
 	}
 
 	/**

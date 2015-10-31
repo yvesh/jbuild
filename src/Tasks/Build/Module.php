@@ -51,8 +51,8 @@ class Module extends Base implements TaskInterface
 
 		$this->modName = $modName;
 
-		$this->source = $this->_source() . "/modules/" . $modName;
-		$this->target = $this->_dest() . "/modules/" . $modName;
+		$this->source = $this->getSourceFolder() . "/modules/" . $modName;
+		$this->target = $this->getBuildFolder() . "/modules/" . $modName;
 	}
 
 	/**

@@ -58,14 +58,14 @@ class Map extends JTask implements TaskInterface
 	{
 
 		$this->say('Mapping ' . $this->getConfig()->extension . " to " . $this->target);
-		$this->say('OS: ' . $this->getOs() . " | Basedir: " . $this->getCodeBase());
+		$this->say('OS: ' . $this->getOs() . " | Basedir: " . $this->getSourceFolder());
 
 		if (!$this->checkFolders())
 		{
 			return false;
 		}
 
-		$dirHandle = opendir($this->getCodeBase());
+		$dirHandle = opendir($this->getSourceFolder());
 
 		// Get all main dirs
 		while (false !== ($element = readdir($dirHandle)))
@@ -79,7 +79,7 @@ class Map extends JTask implements TaskInterface
 
 			if (method_exists($this, $method))
 			{
-				$this->$method($this->getCodeBase() . "/" . $element, $this->target);
+				$this->$method($this->getSourceFolder() . "/" . $element, $this->target);
 			}
 			else
 			{
@@ -90,7 +90,7 @@ class Map extends JTask implements TaskInterface
 		closedir($dirHandle);
 
 		// Get lib_compojoom (TODO move into separate file)
-		$libDir = dirname(dirname($this->getCodeBase())) . "/lib_compojoom/source";
+		$libDir = dirname(dirname($this->getSourceFolder())) . "/lib_compojoom/source";
 
 		$libHandle = opendir($libDir);
 
@@ -136,11 +136,10 @@ class Map extends JTask implements TaskInterface
 	 */
 	private function processAdministrator()
 	{
-		$this->processComponents($this->getCodeBase() . '/administrator/components', $this->target . '/administrator');
-
-		$this->processLanguage($this->getCodeBase() . '/administrator/language', $this->target . '/administrator');
-
-		$this->processModules($this->getCodeBase() . '/administrator/modules', $this->target . '/administrator/modules');
+		$sourceFolder = $this->getSourceFolder();
+		$this->processComponents($sourceFolder . '/administrator/components', $this->target . '/administrator');
+		$this->processLanguage($sourceFolder . '/administrator/language', $this->target . '/administrator');
+		$this->processModules($sourceFolder . '/administrator/modules', $this->target . '/administrator/modules');
 	}
 
 
@@ -213,7 +212,7 @@ class Map extends JTask implements TaskInterface
 	 */
 	private function processLibraries($toDir)
 	{
-		$this->mapDir('libraries', $this->getCodeBase(), $toDir);
+		$this->mapDir('libraries', $this->getSourceFolder(), $toDir);
 	}
 
 	/**
@@ -225,7 +224,7 @@ class Map extends JTask implements TaskInterface
 	 */
 	private function processMedia($toDir)
 	{
-		$this->mapDir('media', $this->getCodeBase(), $toDir);
+		$this->mapDir('media', $this->getSourceFolder(), $toDir);
 	}
 
 	/**
@@ -237,7 +236,7 @@ class Map extends JTask implements TaskInterface
 	 */
 	private function processCli($toDir)
 	{
-		$this->mapDir('cli', $this->getCodeBase(), $toDir);
+		$this->mapDir('cli', $this->getSourceFolder(), $toDir);
 	}
 
 	/**
@@ -261,25 +260,25 @@ class Map extends JTask implements TaskInterface
 	 */
 	private function processPlugins($src, $toDir)
 	{
-		if (is_dir($this->getCodeBase()))
+		if (is_dir($this->getSourceFolder()))
 		{
-			$dirHandle = opendir($this->getCodeBase());
+			$dirHandle = opendir($this->getSourceFolder());
 
 			// Plugin folder
 			while (false !== ($element = readdir($dirHandle)))
 			{
 				if (substr($element, 0, 1) != '.')
 				{
-					$plgDirHandle = opendir($this->getCodeBase() . "/" . $element);
+					$plgDirHandle = opendir($this->getSourceFolder() . "/" . $element);
 
 					while (false !== ($plugin = readdir($plgDirHandle)))
 					{
 						if  (substr($element, 0, 1) != '.')
 						{
-							if (is_dir($this->getCodeBase() . "/" . $element . "/" . $plugin))
+							if (is_dir($this->getSourceFolder() . "/" . $element . "/" . $plugin))
 							{
 								$this->symlink(
-									$this->getCodeBase() . '/' . $element . "/" . $plugin,
+									$this->getSourceFolder() . '/' . $element . "/" . $plugin,
 									$toDir . '/plugins/' . $element . '/' . $plugin
 								);
 							}
@@ -301,15 +300,15 @@ class Map extends JTask implements TaskInterface
 	private function mapDir($type, $toDir)
 	{
 		// Check if dir exists
-		if (is_dir($this->getCodeBase()))
+		if (is_dir($this->getSourceFolder()))
 		{
-			$dirHandle = opendir($this->getCodeBase());
+			$dirHandle = opendir($this->getSourceFolder());
 
 			while (false !== ($element = readdir($dirHandle)))
 			{
 				if (substr($element, 0, 1) != '.')
 				{
-					$this->symlink($this->getCodeBase() . '/' . $element, $toDir . '/' . $type . '/' . $element);
+					$this->symlink($this->getSourceFolder() . '/' . $element, $toDir . '/' . $type . '/' . $element);
 				}
 			}
 		}

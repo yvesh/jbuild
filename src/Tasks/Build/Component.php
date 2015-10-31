@@ -52,8 +52,8 @@ class Component extends Base implements TaskInterface
 		// Reset files - > new component
 		$this->resetFiles();
 
-		$this->adminPath = $this->getSourceFolder() . "/administrator/components/com_" . $this->_ext();
-		$this->frontPath = $this->getSourceFolder() . "/components/com_" . $this->_ext();
+		$this->adminPath = $this->getSourceFolder() . "/administrator/components/com_" . $this->getExtensionName();
+		$this->frontPath = $this->getSourceFolder() . "/components/com_" . $this->getExtensionName();
 	}
 
 	/**
@@ -73,26 +73,26 @@ class Component extends Base implements TaskInterface
 
 		if ($this->hasAdmin)
 		{
-			$adminFiles = $this->copyTarget($this->adminPath, $this->_dest() . "/administrator/components/com_" . $this->_ext());
+			$adminFiles = $this->copyTarget($this->adminPath, $this->getBuildFolder() . "/administrator/components/com_" . $this->getExtensionName());
 
 			$this->addFiles('backend', $adminFiles);
 		}
 
 		if ($this->hasFront)
 		{
-			$frontendFiles = $this->copyTarget($this->frontPath, $this->_dest() . "/components/com_" . $this->_ext());
+			$frontendFiles = $this->copyTarget($this->frontPath, $this->getBuildFolder() . "/components/com_" . $this->getExtensionName());
 
 			$this->addFiles('frontend', $frontendFiles);
 		}
 
 		// Build media (relative path)
-		$media = $this->buildMedia("media/com_" . $this->_ext(), 'com_' . $this->_ext());
+		$media = $this->buildMedia("media/com_" . $this->getExtensionName(), 'com_' . $this->getExtensionName());
 		$media->run();
 
 		$this->addFiles('media', $media->getResultFiles());
 
 		// Build language files for the component
-		$language = $this->buildLanguage("com_" . $this->_ext());
+		$language = $this->buildLanguage("com_" . $this->getExtensionName());
 		$language->run();
 
 		// Cli
@@ -105,22 +105,22 @@ class Component extends Base implements TaskInterface
 		$this->createInstaller();
 
 		// Copy XML and script.php to root
-		$adminFolder = $this->_dest() . "/administrator/components/com_" . $this->_ext();
-		$xmlFile     = $adminFolder . "/" . $this->_ext() . ".xml";
+		$adminFolder = $this->getBuildFolder() . "/administrator/components/com_" . $this->getExtensionName();
+		$xmlFile     = $adminFolder . "/" . $this->getExtensionName() . ".xml";
 		$scriptFile  = $adminFolder . "/script.php";
 
-		$this->_copy($xmlFile, $this->_dest() . "/" . $this->_ext() . ".xml");
-		$this->_copy($scriptFile, $this->_dest() . "/script.php");
+		$this->_copy($xmlFile, $this->getBuildFolder() . "/" . $this->getExtensionName() . ".xml");
+		$this->_copy($scriptFile, $this->getBuildFolder() . "/script.php");
 
 		if (file_exists($scriptFile))
 		{
-			$this->_copy($scriptFile, $this->_dest() . "/script.php");
+			$this->_copy($scriptFile, $this->getBuildFolder() . "/script.php");
 		}
 
 		// Copy Readme
 		if (JPATH_BASE . "/docs/README.md")
 		{
-			$this->_copy(JPATH_BASE . "/docs/README.md", $this->_dest() . "/README");
+			$this->_copy(JPATH_BASE . "/docs/README.md", $this->getBuildFolder() . "/README");
 		}
 
 		return true;
@@ -158,12 +158,12 @@ class Component extends Base implements TaskInterface
 	{
 		if ($this->hasAdmin)
 		{
-			$this->_mkdir($this->_dest() . "/administrator/components/com_" . $this->_ext());
+			$this->_mkdir($this->getBuildFolder() . "/administrator/components/com_" . $this->getExtensionName());
 		}
 
 		if ($this->hasFront)
 		{
-			$this->_mkdir($this->_dest() . "/components/com_" . $this->_ext());
+			$this->_mkdir($this->getBuildFolder() . "/components/com_" . $this->getExtensionName());
 		}
 	}
 
@@ -176,8 +176,8 @@ class Component extends Base implements TaskInterface
 	{
 		$this->say("Creating component installer");
 
-		$adminFolder = $this->_dest() . "/administrator/components/com_" . $this->_ext();
-		$xmlFile     = $adminFolder . "/" . $this->_ext() . ".xml";
+		$adminFolder = $this->getBuildFolder() . "/administrator/components/com_" . $this->getExtensionName();
+		$xmlFile     = $adminFolder . "/" . $this->getExtensionName() . ".xml";
 		$scriptFile  = $adminFolder . "/script.php";
 		$helperFile  = $adminFolder . "/helpers/defines.php";
 

@@ -53,24 +53,24 @@ class Media extends Base implements TaskInterface
 
 		$this->type = substr($extName, 0, 3);
 
-		$target = $this->_dest() . "/" . $folder;
+		$target = $this->getBuildFolder() . "/" . $folder;
 
 		if ($this->type == 'mod')
 		{
-			$target = $this->_dest() . "/modules/" . $extName . "/" . $folder;
+			$target = $this->getBuildFolder() . "/modules/" . $extName . "/" . $folder;
 		}
 		elseif ($this->type == 'plg')
 		{
 			$a = explode("_", $this->extName);
 
-			$target = $this->_dest() . "/plugins/" . $a[1] . "/" . $a[2] . "/" . $folder;
+			$target = $this->getBuildFolder() . "/plugins/" . $a[1] . "/" . $a[2] . "/" . $folder;
 		}
 		elseif ($this->type == 'lib')
 		{
 			// Remove lib before - ugly hack
 			$ex = str_replace("lib_", "", $this->extName);
 
-			$target = $this->_dest() . "/libraries/" . $ex . "/" . $folder;
+			$target = $this->getBuildFolder() . "/libraries/" . $ex . "/" . $folder;
 		}
 
 		$this->target = $target;

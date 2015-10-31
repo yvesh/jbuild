@@ -54,8 +54,8 @@ class Library extends Base implements TaskInterface
 		$this->libName = $libName;
 		$this->hasComponent = $hasComponent;
 
-		$this->source = $this->_source() . "/libraries/" . $libName;
-		$this->target = $this->_dest() . "/libraries/" . $libName;
+		$this->source = $this->getSourceFolder() . "/libraries/" . $libName;
+		$this->target = $this->getBuildFolder() . "/libraries/" . $libName;
 	}
 
 	/**
