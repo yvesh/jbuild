@@ -162,7 +162,7 @@ abstract class JTask extends \Robo\Tasks implements TaskInterface
 		}
 
 		// Load config as object
-		$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini')), false);
+		$config = json_decode(json_encode(parse_ini_file(JPATH_BASE . '/jbuild.ini', true)), false);
 
 		if (!$config) {
 			$this->say('Error: Config file jbuild.ini not available');

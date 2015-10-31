@@ -27,7 +27,6 @@ Desktop.ini
 *~
 
 # composer
-composer.lock
 composer.phar
 vendor/*
 
