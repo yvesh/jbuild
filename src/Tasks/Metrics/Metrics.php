@@ -2,53 +2,34 @@
 /**
  * @package    JBuild
  * @author     Yves Hoppe <yves@compojoom.com>
- * @date       20.09.15
+ * @date       03.10.15
  *
  * @copyright  Copyright (C) 2008 - 2015 Yves Hoppe - compojoom.com . All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
 namespace JBuild\Tasks\Metrics;
+use Robo\Common\IO;
 
-use JBuild\Tasks\Metrics;
-use Robo\Tasks;
-
-trait metricsTasks # extends Tasks
+/**
+ * Metrics class for extensions
+ *
+ * @package  JBuild\Tasks
+ */
+class Metrics
 {
-    /**
-     * The metrics task
-     *
-     * @param   array  $params  - Opt params
-     *
-     * @return  Metrics
-     */
-    protected function taskMetrics($params)
-    {
-        return new Metrics($params);
-    }
+    use IO;
+    use loadTasks;
 
     /**
-     * Calculate all available metrics
+     * Calculate all available metrics - not implemented yet
      */
     public function metrics($params)
     {
-        $this->taskMetrics($params)->run();
     }
 
     /**
-     * Check the codestyle
-     */
-    public function metricsCodestyle($style = 'Joomla')
-    {
-        $params = [
-            'standard' => $style
-        ];
-
-        $this->taskMetrics($params)->codestyle(false);
-    }
-
-    /**
-     * Measure the mess
+     * Measure the mess - not implemented yet
      */
     public function metricsMessdetect()
     {
@@ -56,7 +37,7 @@ trait metricsTasks # extends Tasks
     }
 
     /**
-     * Perform all available checks
+     * Perform all available checks - not implemented yet
      */
     public function check()
     {
@@ -65,7 +46,7 @@ trait metricsTasks # extends Tasks
     }
 
     /**
-     * Check the codestyle
+     * Check the codestyle - not implemented yet
      */
     public function checkCodestyle($style = 'Joomla')
     {
@@ -77,7 +58,7 @@ trait metricsTasks # extends Tasks
     }
 
     /**
-     * Check the mess
+     * Check the mess - not implemented yet
      */
     public function checkMessdetect()
     {
