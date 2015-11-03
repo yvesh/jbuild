@@ -1,3 +1,12 @@
+# Moved to joomla-projects/jorobo
+
+## This project has been moved to https://github.com/joomla-projects/jorobo
+
+
+
+
+
+
 # JBuild (Robo.li tasks for Joomla! extensions) [![Build Status](http://test01.compojoom.com/api/badge/github.com/yvesh/jbuild/status.svg?branch=master)](http://test01.compojoom.com/github.com/yvesh/jbuild)
 
 [![Latest Stable Version](https://poser.pugx.org/yvesh/jbuild/v/stable)](https://packagist.org/packages/yvesh/jbuild) [![Total Downloads](https://poser.pugx.org/yvesh/jbuild/downloads)](https://packagist.org/packages/yvesh/jbuild) [![Latest Unstable Version](https://poser.pugx.org/yvesh/jbuild/v/unstable)](https://packagist.org/packages/yvesh/jbuild) [![License](https://poser.pugx.org/yvesh/jbuild/license)](https://packagist.org/packages/yvesh/jbuild)
@@ -15,7 +24,7 @@ Robo.li build scripts, tools and generators for compojoom.com Joomla! extensions
 
 ## Function overview:
 
-  * vendor/bin/robo map destination - Symlinks an extension into an Joomla installation (WIP @rdeutz working solution)
+  * vendor/bin/robo map destination - Symlinks an extension into an Joomla installation
   * vendor/bin/robo build - Builds your extension into an installable Joomla package including replacements
   * vendor/bin/robo generate [--mod_xy --com_xy --plg_system_xy] (not integrated yet)
   
